@@ -16,9 +16,13 @@ public class PlayerAnswer implements Serializable {
     private int PlayerAnswerID;
 
 
-    @ManyToOne()
+    @ManyToOne(optional = false)
     @JoinColumn(name = "PlayerParticipationID")
     private Participation ParticipationId;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "PlayerRoomID")
+    private Groom RoomID;
 
     @Column(name = "RoundCount")
     private int RoundCount;
@@ -31,8 +35,9 @@ public class PlayerAnswer implements Serializable {
     }
 
     // 생성자
-    public PlayerAnswer(Participation ParticipationId, int RoundCount, String Answer) {
+    public PlayerAnswer(Participation ParticipationId,Groom RoomID, int RoundCount, String Answer) {
         this.ParticipationId = ParticipationId;
+        this.RoomID = RoomID;
         this.RoundCount = RoundCount;
         this.Answer = Answer;
     }

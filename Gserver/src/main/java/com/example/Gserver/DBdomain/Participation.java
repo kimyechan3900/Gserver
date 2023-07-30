@@ -17,11 +17,11 @@ public class Participation implements Serializable {
     @Column(name = "ParticipationID")
     private int ParticipationID;
 
-    @OneToMany(cascade = CascadeType.REMOVE)
+    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<PlayerAnswer> playerAnswers;
 
 
-    @ManyToOne()
+    @ManyToOne(optional = false)
     @JoinColumn(name = "PartRoomID")
     private Groom RoomID;
     @Column(name = "NickName")
@@ -33,16 +33,20 @@ public class Participation implements Serializable {
     @Column(name = "CorrectAnswer")
     private int CorrectAnswer;
 
+    @Column(name = "It")
+    private boolean It;
+
     // 기본 생성자
     public Participation() {
     }
 
     // 생성자
-    public Participation(Groom RoomID, String NickName, boolean RoomOwner, int CorrectAnswer) {
+    public Participation(Groom RoomID, String NickName, boolean RoomOwner, int CorrectAnswer,boolean It) {
         this.RoomID = RoomID;
         this.NickName = NickName;
         this.RoomOwner = RoomOwner;
         this.CorrectAnswer = CorrectAnswer;
+        this.It = It;
     }
 
     // Getter 메서드
@@ -86,5 +90,13 @@ public class Participation implements Serializable {
     public void setCorrectAnswer(int CorrectAnswer) {
         this.CorrectAnswer = CorrectAnswer;
     }
+    public boolean isIt() {
+        return It;
+    }
+
+    public void setIt(boolean it) {
+        It = it;
+    }
+
 }
 

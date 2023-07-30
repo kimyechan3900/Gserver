@@ -11,11 +11,14 @@ public class Groom {
     @Column(name = "RoomID",length = 100)
     private String RoomID;
 
-    @OneToMany(cascade = CascadeType.REMOVE)
+    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Participation> participation;
 
-    @OneToMany(cascade = CascadeType.REMOVE)
+    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<CustomQuery> customQueries;
+
+    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<PlayerAnswer> playerAnswers;
 
     @Column(name = "ParticipationCount")
     private int ParticipationCount;
@@ -26,15 +29,20 @@ public class Groom {
     @Column(name = "CurrentRound")
     private int CurrentRound;
 
+
+    @Column(name = "ItCount")
+    private int ItCount;
+
     public Groom() {
         // Default constructor
     }
 
-    public Groom(String RoomID, int ParticipationCount, int GameRepeat, int CurrentRound) {
+    public Groom(String RoomID, int ParticipationCount, int GameRepeat, int CurrentRound, int ItCount) {
         this.RoomID = RoomID;
         this.ParticipationCount = ParticipationCount;
         this.GameRepeat = GameRepeat;
         this.CurrentRound = CurrentRound;
+        this.ItCount = ItCount;
     }
 
     public String getRoomID() {
@@ -67,5 +75,13 @@ public class Groom {
 
     public void setCurrentCount(int CurrentCount) {
         this.CurrentRound = CurrentCount;
+    }
+
+    public int getItCount() {
+        return ItCount;
+    }
+
+    public void setItCount(int itCount) {
+        ItCount = itCount;
     }
 }

@@ -17,12 +17,26 @@ public interface GroomRepo extends JpaRepository<Groom, String> {
     void plusParticipantCountById(@Param("RoomID")String RoomID);
 
     @Modifying
+    @Transactional
     @Query("UPDATE Groom g SET g.CurrentRound = g.CurrentRound + 1 WHERE g.RoomID = :RoomID")
     void plusRoundById(@Param("RoomID")String RoomID);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Groom g SET g.ItCount = g.ItCount + 1 WHERE g.RoomID = :RoomID")
+    void plusItCountById(@Param("RoomID")String RoomID);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Groom g SET g.ItCount = 0 WHERE g.RoomID = :RoomID")
+    void resetItCount(@Param("RoomID")String RoomID);
 
 
     @Query("SELECT g.ParticipationCount FROM Groom g WHERE g.RoomID = :RoomID")
     int getParticipationCount(@Param("RoomID")String RoomID);
+
+    @Query("SELECT g.ItCount FROM Groom g WHERE g.RoomID = :RoomID")
+    int getItCount(@Param("RoomID")String RoomID);
 
     @Query("SELECT g.CurrentRound FROM Groom g WHERE g.RoomID = :RoomID")
     int getCurrentRound(@Param("RoomID")String RoomID);
@@ -33,6 +47,7 @@ public interface GroomRepo extends JpaRepository<Groom, String> {
     void SetGameRepeatCount(@Param("RoomID")String RoomID,@Param("GameRepeatCount")int gameRepeatCount);
 
     @Modifying
+    @Transactional
     @Query("DELETE FROM Groom g WHERE g.RoomID = :RoomID")
     void deleteByRoomID(@Param("RoomID") String RoomID);
 }

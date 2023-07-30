@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
-class GserverApplicationTests {
+class LocalTest {
 
 	@Autowired
 	CroomService croomService;

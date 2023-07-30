@@ -13,7 +13,7 @@ public class CustomQuery {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int CustomQueryID;
 
-    @ManyToOne()
+    @ManyToOne(optional = false)
     @JoinColumn(name = "CustomRoomID")
     private Groom RoomID;
 
