@@ -21,7 +21,9 @@ public class SocketController {
         this.template = template;
     }
 
-    @SubscribeMapping("/room/{roomId}")
+    @SubscribeMapping("/room/{roomId}")// 웹소켓 구독 ("room//{roomId}")으로 들어오는 거는 다 받음.
+    // '/topic/room/123'식으로 url 설정하면됨.
+    //구독취소는 클라이언트쪽에서 같은 url로 구독 취소하면됨.
     public void ParticipateRoom(@DestinationVariable String roomId, @Payload Map<String,String> payload, SimpMessageHeaderAccessor headerAccessor){
         String NickName = payload.get("NickName");
         String sessionId = headerAccessor.getSessionId();
@@ -30,7 +32,8 @@ public class SocketController {
         template.convertAndSend(String.format("/room/%s", roomId),NickName);
     }
 
-    @MessageMapping("/Start/{roomId}")
+    @MessageMapping("/Start/{roomId}")//클라이언트에서 메세지를 보내는 것.\
+    // '/app/Start/123'식으로 url 설정하면됨.
     public void GameStart(@DestinationVariable String roomId){
         System.out.println("Game Start " + roomId);
 
@@ -38,7 +41,8 @@ public class SocketController {
     }
 
     @MessageMapping("/GetQuestion/{roomId}")
-    public void ParticipateRoom(@DestinationVariable String roomId, @Payload Map<String,String> payload){
+    // '/app/GetQuestion/123'식으로 url 설정하면됨.
+    public void GetQuestion(@DestinationVariable String roomId, @Payload Map<String,String> payload){
         String Question = payload.get("Question");
         System.out.println("GetQuestion " + roomId);
 
@@ -46,6 +50,7 @@ public class SocketController {
     }
 
     @MessageMapping("/GetItName/{roomId}")
+    // '/app/GetItName/123'식으로 url 설정하면됨.
     public void GetItName(@DestinationVariable String roomId, @Payload Map<String,String> payload){
         String ItName = payload.get("ItName");
         System.out.println("GetItName " + roomId);
@@ -54,19 +59,13 @@ public class SocketController {
     }
 
     @MessageMapping("/CompleteAnswer/{roomId}")
+    // '/app/CompleteAnswer/123'식으로 url 설정하면됨.
     public void CompleteAnswer(@DestinationVariable String roomId){
         //String NickName = payload.get("NickName");
         System.out.println("CompleteAnswer " + roomId);
 
-        template.convertAndSend(String.format("/room/%s", roomId));
+        template.convertAndSend(String.format("/room/%s", roomId),"CompleteAnswer");
     }
-
-
-
-
-
-
-
 
 
 }

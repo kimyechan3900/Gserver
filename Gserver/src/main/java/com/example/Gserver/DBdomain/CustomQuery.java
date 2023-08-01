@@ -4,6 +4,8 @@ package com.example.Gserver.DBdomain;
 
 import javax.persistence.*;
 
+
+
 @Entity
 @Table(schema = "gserver",name = "customquery")
 public class CustomQuery {
