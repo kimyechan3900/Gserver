@@ -26,9 +26,25 @@ public interface PlayerAnswerRepo extends JpaRepository<PlayerAnswer,Long> {
     @Query("SELECT Answer FROM PlayerAnswer p WHERE p.RoomID = :RoomID and p.RoundCount = :RoundCount")
     List<String> getAnswers(@Param("RoomID")Groom groom,@Param("RoundCount") int RoundCount);
 
+
+
+
+
+
+
+
+
+
     @Modifying
     @Transactional
     @Query("DELETE FROM PlayerAnswer p WHERE p.RoomID = :RoomID")
     void deleteByRoomID(@Param("RoomID") Groom RoomID);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM PlayerAnswer p WHERE p.ParticipationId = :ParticipationId")
+    void deleteByParticipationId(@Param("ParticipationId")Participation ParticipationId);
+
+
 
 }

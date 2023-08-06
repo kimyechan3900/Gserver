@@ -9,6 +9,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -25,14 +26,19 @@ public class SocketController {
     // '/topic/room/123'식으로 url 설정하면됨.
     //구독취소는 클라이언트쪽에서 같은 url로 구독 취소하면됨.
     public void ParticipateRoom(@DestinationVariable String roomId, @Payload Map<String,String> payload, SimpMessageHeaderAccessor headerAccessor){
+
         String NickName = payload.get("NickName");
         String sessionId = headerAccessor.getSessionId();
         System.out.println("Client subscribed to room " + roomId + " with session ID: " + sessionId);
 
-        template.convertAndSend(String.format("/room/%s", roomId),NickName);
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("NickName",NickName);
+
+
+        template.convertAndSend(String.format("/topic/room/%s", roomId),"Participate",headers);
     }
 
-    @MessageMapping("/Start/{roomId}")//클라이언트에서 메세지를 보내는 것.\
+    @MessageMapping("/Start/{roomId}")//클라이언트에서 메세지를 보내는 것.
     // '/app/Start/123'식으로 url 설정하면됨.
     public void GameStart(@DestinationVariable String roomId){
         System.out.println("Game Start " + roomId);
@@ -46,7 +52,10 @@ public class SocketController {
         String Question = payload.get("Question");
         System.out.println("GetQuestion " + roomId);
 
-        template.convertAndSend(String.format("/room/%s", roomId),Question);
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("Question",Question);
+
+        template.convertAndSend(String.format("/room/%s", roomId),"Question",headers);
     }
 
     @MessageMapping("/GetItName/{roomId}")
@@ -55,8 +64,12 @@ public class SocketController {
         String ItName = payload.get("ItName");
         System.out.println("GetItName " + roomId);
 
-        template.convertAndSend(String.format("/room/%s", roomId),ItName);
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("ItName",ItName);
+
+        template.convertAndSend(String.format("/room/%s", roomId),"ItName",headers);
     }
+
 
     @MessageMapping("/CompleteAnswer/{roomId}")
     // '/app/CompleteAnswer/123'식으로 url 설정하면됨.
@@ -67,5 +80,23 @@ public class SocketController {
         template.convertAndSend(String.format("/room/%s", roomId),"CompleteAnswer");
     }
 
+    @MessageMapping("/Exit/{roomId}")
+    // '/app/CompleteAnswer/123'식으로 url 설정하면됨.
+    public void Exit(@DestinationVariable String roomId, @Payload Map<String,String> payload){
+        String NickName = payload.get("NickName");
+        System.out.println("ExitPalyer " + roomId +" "+NickName);
+        template.convertAndSend(String.format("/room/%s", roomId),"NickName");
+    }
+
+    @MessageMapping("/Finish/{roomId}")
+    // '/app/CompleteAnswer/123'식으로 url 설정하면됨.
+    public void Finish(@DestinationVariable String roomId){
+        System.out.println("Finish " + roomId);
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("RoomId",roomId);
+
+        template.convertAndSend(String.format("/room/%s", roomId),"Finish",headers);
+    }
 
 }

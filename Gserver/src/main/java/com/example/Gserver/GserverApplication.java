@@ -9,5 +9,5 @@ public class GserverApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(GserverApplication.class, args);
 	}
-
 }
+

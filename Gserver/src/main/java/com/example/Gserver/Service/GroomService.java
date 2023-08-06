@@ -168,6 +168,7 @@ public class GroomService {
 
         return participationRepo.getCorrectAnswer(groom,NickName);
     }
+
     public String ChangeIt(String roomNumber){
         if (groomRepo.existsById(roomNumber)){
             Groom groom = groomRepo.getById(roomNumber);
@@ -223,6 +224,21 @@ public class GroomService {
             System.out.println("해당 방이 존재하지 않습니다.");
             return -1;
         }
+    }
+
+    public void ExitPlayer(String roomNumber,String NickName){
+        if (groomRepo.existsById(roomNumber)) {
+            Groom groom = groomRepo.getById(roomNumber);
+            if(participationRepo.existsByRoomIDAndNickName(groom,NickName)) {
+                Participation participation = participationRepo.getByRoomIDAndNickName(groom, NickName);
+                playerAnswerRepo.deleteByParticipationId(participation);
+                participationRepo.deleteByRoomIDandNickName(groom, NickName);
+            }
+            else
+                System.out.println("플레이어가 존재하지 않습니다.");
+        }
+        else
+            System.out.println("방이 존재하지 않습니다.");
     }
 
     public void FinishGame(String roomNumber){

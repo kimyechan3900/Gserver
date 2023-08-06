@@ -1,4 +1,4 @@
-package com.example.Gserver.domain;
+package com.example.Gserver.DTO;
 
 import java.util.Random;
 

@@ -1,6 +1,5 @@
 package com.example.Gserver.DBdomain;
 
-import com.example.Gserver.domain.Question;
 import javax.persistence.Id;
 
 import javax.persistence.*;

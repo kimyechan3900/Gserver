@@ -11,6 +11,26 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface GroomRepo extends JpaRepository<Groom, String> {
 
+
+    @Query("SELECT g.ParticipationCount FROM Groom g WHERE g.RoomID = :RoomID")
+    int getParticipationCount(@Param("RoomID")String RoomID);
+
+    @Query("SELECT g.ItCount FROM Groom g WHERE g.RoomID = :RoomID")
+    int getItCount(@Param("RoomID")String RoomID);
+
+    @Query("SELECT g.CurrentRound FROM Groom g WHERE g.RoomID = :RoomID")
+    int getCurrentRound(@Param("RoomID")String RoomID);
+
+
+
+
+
+
+
+
+
+
+
     @Modifying
     @Transactional
     @Query("UPDATE Groom g SET g.ParticipationCount = g.ParticipationCount + 1 WHERE g.RoomID = :RoomID")
@@ -31,20 +51,21 @@ public interface GroomRepo extends JpaRepository<Groom, String> {
     @Query("UPDATE Groom g SET g.ItCount = 0 WHERE g.RoomID = :RoomID")
     void resetItCount(@Param("RoomID")String RoomID);
 
-
-    @Query("SELECT g.ParticipationCount FROM Groom g WHERE g.RoomID = :RoomID")
-    int getParticipationCount(@Param("RoomID")String RoomID);
-
-    @Query("SELECT g.ItCount FROM Groom g WHERE g.RoomID = :RoomID")
-    int getItCount(@Param("RoomID")String RoomID);
-
-    @Query("SELECT g.CurrentRound FROM Groom g WHERE g.RoomID = :RoomID")
-    int getCurrentRound(@Param("RoomID")String RoomID);
-
     @Modifying
     @Transactional
     @Query("UPDATE Groom g SET g.GameRepeat = :GameRepeatCount WHERE g.RoomID = :RoomID")
     void SetGameRepeatCount(@Param("RoomID")String RoomID,@Param("GameRepeatCount")int gameRepeatCount);
+
+
+
+
+
+
+
+
+
+
+
 
     @Modifying
     @Transactional

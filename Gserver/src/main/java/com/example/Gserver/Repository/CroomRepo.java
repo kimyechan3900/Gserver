@@ -1,6 +1,6 @@
 package com.example.Gserver.Repository;
 
-import com.example.Gserver.domain.GRoom;
+import com.example.Gserver.DTO.GRoom;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;

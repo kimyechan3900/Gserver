@@ -1,4 +1,4 @@
-package com.example.Gserver.domain;
+package com.example.Gserver.DTO;
 
 public class PlayerAnswer {
     private String content;

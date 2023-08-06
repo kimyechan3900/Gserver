@@ -132,6 +132,16 @@ public class CroomController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/Exit",method = RequestMethod.POST)
+    @ApiOperation(value="플레이어 방 나가기", notes="방넘버(String),본인닉네임(String)")
+    public ResponseEntity<String> Exit(@RequestBody Map<String,Object> requestMap){
+        String roomNumber = (String)requestMap.get("roomNumber");
+        String NickName = (String) requestMap.get("NickName");
+        service.ExitPlayer(roomNumber,NickName);
+        String response = "ok";
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 
     @RequestMapping(value = "/Finish",method = RequestMethod.POST)
     @ApiOperation(value="게임 종료", notes="방넘버(String)")
@@ -141,4 +151,6 @@ public class CroomController {
         String response = "ok";
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
 }
