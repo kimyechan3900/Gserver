@@ -29,10 +29,11 @@ public class SocketController {
         String sessionId = headerAccessor.getSessionId();
         System.out.println("Client subscribed to room " + roomId + " with session ID: " + sessionId);
 
-        template.convertAndSend(String.format("/room/%s", roomId),NickName);
+        System.out.println(NickName+"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+        template.convertAndSend(String.format("/topic/room/%s", roomId),NickName);
     }
 
-    @MessageMapping("/Start/{roomId}")//클라이언트에서 메세지를 보내는 것.\
+    @MessageMapping("/Start/{roomId}")//클라이언트에서 메세지를 보내는 것.
     // '/app/Start/123'식으로 url 설정하면됨.
     public void GameStart(@DestinationVariable String roomId){
         System.out.println("Game Start " + roomId);
@@ -66,6 +67,4 @@ public class SocketController {
 
         template.convertAndSend(String.format("/room/%s", roomId),"CompleteAnswer");
     }
-
-
 }

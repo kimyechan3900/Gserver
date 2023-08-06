@@ -1,10 +1,26 @@
 package com.example.Gserver.Config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.lang.Nullable;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.WebSocketMessage;
+import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
+import org.springframework.web.socket.server.HandshakeInterceptor;
+
+import java.util.Map;
 
 @Configuration
 @EnableWebSocketMessageBroker
@@ -12,8 +28,32 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/room").withSockJS(); //웹소켓 연결을 하는 경로 설정
+        registry.addEndpoint("/room")
+                .withSockJS() //웹소켓 연결을 하는 경로 설정
+                .setInterceptors(new HandshakeInterceptor(){
+                    @Override
+                    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
+                                                   WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
+                        System.out.println("웹소켓: Handshake 시작");
+                        return true; // 이를 false로 반환하면 Handshake를 중단합니다.
+                    }
+
+                    @Override
+                    public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response,
+                                               WebSocketHandler wsHandler, Exception exception) {
+                        if (exception == null) {
+                            System.out.println("웹소켓: Handshake 성공");
+                        } else {
+                            System.out.println("웹소켓: Handshake 실패");
+                            exception.printStackTrace();
+                        }
+                    }
+                });
+
+
+        System.out.println("웹소켓 연결 초기 서버 설정 완료");
         // 1. http://localhost:8080/room을 통해 클아이언트에서 웹소켓 연결가능.
+        // 이거는 웹소켓 연결을 하는 거라, 클라이언트 웹소켓 시작시 한번만 연결을 하면됨 (웹소켓 연결 -> 메세지보내기 (메세지 받고싶으면 주제 구독))
     }
 
     @Override
@@ -26,4 +66,29 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         //topic은 주로 구독할때 쓰임.
         //두 코드다 접두사를 설정하는 것임 -> /app , /topic 둘다 접두사임.
     }
+
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(new ChannelInterceptor() {
+            @Override
+            public void afterSendCompletion(Message<?> message, MessageChannel channel, boolean sent, @Nullable Exception ex) {
+                StompHeaderAccessor sha = StompHeaderAccessor.wrap(message);
+                // ignore non-STOMP messages like heartbeat messages
+                if (sha.getCommand() == null) {
+                    return;
+                }
+
+                String sessionId = sha.getSessionId();
+                switch (sha.getCommand()) {
+                    case DISCONNECT:
+                        System.out.println("웹소켓: 연결 종료 - " + sessionId);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+    }
+
+
 }
