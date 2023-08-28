@@ -1,13 +1,10 @@
-package com.example.Gserver.DBdomain;
+package com.example.Gserver.Model;
 
 import lombok.Data;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Optional;
 
 @Entity
 @Data

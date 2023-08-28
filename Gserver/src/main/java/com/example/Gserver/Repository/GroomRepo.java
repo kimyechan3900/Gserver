@@ -1,6 +1,6 @@
 package com.example.Gserver.Repository;
 
-import com.example.Gserver.DBdomain.Groom;
+import com.example.Gserver.Model.Groom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -38,6 +38,11 @@ public interface GroomRepo extends JpaRepository<Groom, String> {
 
     @Modifying
     @Transactional
+    @Query("UPDATE Groom g SET g.ParticipationCount = g.ParticipationCount - 1 WHERE g.RoomID = :RoomID")
+    void minusParticipantCountById(@Param("RoomID")String RoomID);
+
+    @Modifying
+    @Transactional
     @Query("UPDATE Groom g SET g.CurrentRound = g.CurrentRound + 1 WHERE g.RoomID = :RoomID")
     void plusRoundById(@Param("RoomID")String RoomID);
 
@@ -45,6 +50,8 @@ public interface GroomRepo extends JpaRepository<Groom, String> {
     @Transactional
     @Query("UPDATE Groom g SET g.ItCount = g.ItCount + 1 WHERE g.RoomID = :RoomID")
     void plusItCountById(@Param("RoomID")String RoomID);
+
+
 
     @Modifying
     @Transactional

@@ -1,5 +1,6 @@
 package com.example.Gserver.Controller;
 
+import com.example.Gserver.Dto.Participation;
 import com.example.Gserver.Service.CroomService;
 import com.example.Gserver.Service.GroomService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,7 +55,7 @@ public class CroomController {
     }
 
     @RequestMapping(value = "/GetParticipation",method = RequestMethod.POST)
-    @ApiOperation(value="참가자 방참가", notes="방넘버(String)")
+    @ApiOperation(value="참가자 출력", notes="방넘버(String)")
     public ResponseEntity<List<String>> GetParticipation(@RequestBody Map<String,Object> requestMap){
         String roomNumber = (String)requestMap.get("roomNumber");
         List<String> Answers = service.getParticipation(roomNumber);
@@ -107,7 +108,6 @@ public class CroomController {
         return new ResponseEntity<>(ItName, HttpStatus.OK);
     }
 
-
     @RequestMapping(value = "/GuessPerson",method = RequestMethod.POST)
     @ApiOperation(value="질문 맞추기완료", notes="방넘버(String),본인닉네임(String),대상닉네임(String),대상 답변(String)")
     public ResponseEntity<Integer> GuessPerson(@RequestBody Map<String,Object> requestMap){
@@ -120,7 +120,6 @@ public class CroomController {
         int result = service.CompareAnswer(roomNumber,NickName,selectNickName, selectAnswer);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-
 
 
     @RequestMapping(value = "/Result",method = RequestMethod.POST)
@@ -148,6 +147,16 @@ public class CroomController {
     public ResponseEntity<String> Finish(@RequestBody Map<String,Object> requestMap){
         String roomNumber = (String)requestMap.get("roomNumber");
         service.FinishGame(roomNumber);
+        String response = "ok";
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/CreateCustomQuery",method = RequestMethod.POST)
+    @ApiOperation(value="커스텀질문생성", notes="방넘버(String)")
+    public ResponseEntity<String> CreateCustomQuery(@RequestBody Map<String,Object> requestMap){
+        String roomNumber = (String)requestMap.get("roomNumber");
+        String question = (String)requestMap.get("question");
+        service.SaveCustomQuestion(roomNumber,question);
         String response = "ok";
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

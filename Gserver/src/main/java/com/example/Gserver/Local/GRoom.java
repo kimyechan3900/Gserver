@@ -1,4 +1,4 @@
-package com.example.Gserver.DTO;
+package com.example.Gserver.Local;
 
 import java.util.HashMap;
 import java.util.Map;

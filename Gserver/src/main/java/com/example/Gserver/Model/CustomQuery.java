@@ -1,4 +1,4 @@
-package com.example.Gserver.DBdomain;
+package com.example.Gserver.Model;
 
 
 
@@ -9,6 +9,7 @@ import javax.persistence.*;
 @Entity
 @Table(schema = "gserver",name = "customquery")
 public class CustomQuery {
+
 
     @Id
     @Column(name = "CustomQueryID")
@@ -21,4 +22,9 @@ public class CustomQuery {
 
     @Column(name="Question")
     private String Question;
+
+    public CustomQuery(Groom roomID, String question) {
+        RoomID = roomID;
+        Question = question;
+    }
 }

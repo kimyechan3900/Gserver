@@ -1,23 +1,14 @@
 package com.example.Gserver.Service;
 
-import com.example.Gserver.DBdomain.DefaultQuestion;
-import com.example.Gserver.DBdomain.Groom;
-import com.example.Gserver.DBdomain.Participation;
-import com.example.Gserver.DBdomain.PlayerAnswer;
+import com.example.Gserver.Model.*;
 import com.example.Gserver.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.expression.spel.ast.NullLiteral;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -100,6 +91,17 @@ public class GroomService {
     public void SaveDefaultQuestion(String question){
         DefaultQuestion defaultQuestion = new DefaultQuestion(question);
         defaultQuestionRepo.save(defaultQuestion);
+    }
+
+    public void SaveCustomQuestion(String roomNumber, String question){
+        if (groomRepo.existsById(roomNumber)) {
+            Groom groom = groomRepo.getById(roomNumber);
+            CustomQuery customQuestion = new CustomQuery(groom,question);
+            customQueryRepo.save(customQuestion);
+        }
+        else{
+            System.out.println("해당 방이 존재하지 않습니다.");
+        }
     }
 
     public String GetQuestion(String roomNumber){
@@ -233,6 +235,9 @@ public class GroomService {
                 Participation participation = participationRepo.getByRoomIDAndNickName(groom, NickName);
                 playerAnswerRepo.deleteByParticipationId(participation);
                 participationRepo.deleteByRoomIDandNickName(groom, NickName);
+                groomRepo.minusParticipantCountById(roomNumber);
+                if(groomRepo.getParticipationCount(roomNumber) == 0)
+                    groomRepo.deleteByRoomID(roomNumber);
             }
             else
                 System.out.println("플레이어가 존재하지 않습니다.");

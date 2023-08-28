@@ -34,7 +34,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     @Override
                     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
                                                    WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-                        System.out.println("웹소켓: Handshake 시작");
+                        System.out.println("웹소켓: Handshake start");
                         return true; // 이를 false로 반환하면 Handshake를 중단합니다.
                     }
 
@@ -42,9 +42,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response,
                                                WebSocketHandler wsHandler, Exception exception) {
                         if (exception == null) {
-                            System.out.println("웹소켓: Handshake 성공");
+                            System.out.println("웹소켓: Handshake success");
                         } else {
-                            System.out.println("웹소켓: Handshake 실패");
+                            System.out.println("웹소켓: Handshake false");
                             exception.printStackTrace();
                         }
                     }
@@ -81,7 +81,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 String sessionId = sha.getSessionId();
                 switch (sha.getCommand()) {
                     case DISCONNECT:
-                        System.out.println("웹소켓: 연결 종료 - " + sessionId);
+                        System.out.println("웹소켓: connection disconnect - " + sessionId);
                         break;
                     default:
                         break;

@@ -1,7 +1,4 @@
-package com.example.Gserver.DBdomain;
-
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+package com.example.Gserver.Model;
 
 import javax.persistence.*;
 import java.util.List;

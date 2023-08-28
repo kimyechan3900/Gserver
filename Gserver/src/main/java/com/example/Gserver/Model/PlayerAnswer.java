@@ -1,4 +1,4 @@
-package com.example.Gserver.DBdomain;
+package com.example.Gserver.Model;
 
 import lombok.Data;
 
