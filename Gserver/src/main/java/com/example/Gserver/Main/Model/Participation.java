@@ -1,7 +1,6 @@
-package com.example.Gserver.Model;
+package com.example.Gserver.Main.Model;
 
 import lombok.Data;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import javax.persistence.*;
 import java.io.Serializable;

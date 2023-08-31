@@ -1,8 +1,8 @@
-package com.example.Gserver.Repository;
+package com.example.Gserver.Main.Repository;
 
-import com.example.Gserver.Model.Groom;
-import com.example.Gserver.Model.Participation;
-import com.example.Gserver.Model.PlayerAnswer;
+import com.example.Gserver.Main.Model.Groom;
+import com.example.Gserver.Main.Model.Participation;
+import com.example.Gserver.Main.Model.PlayerAnswer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

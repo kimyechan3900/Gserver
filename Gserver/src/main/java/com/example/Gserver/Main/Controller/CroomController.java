@@ -1,7 +1,7 @@
-package com.example.Gserver.Controller;
+package com.example.Gserver.Main.Controller;
 
-import com.example.Gserver.Model.Participation;
-import com.example.Gserver.Service.GroomService;
+import com.example.Gserver.Main.Model.Participation;
+import com.example.Gserver.Main.Service.GroomService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;

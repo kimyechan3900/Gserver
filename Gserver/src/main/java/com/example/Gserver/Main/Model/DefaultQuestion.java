@@ -1,4 +1,4 @@
-package com.example.Gserver.Model;
+package com.example.Gserver.Main.Model;
 
 import javax.persistence.Id;
 

@@ -1,4 +1,4 @@
-package com.example.Gserver.Config;
+package com.example.Gserver.Websocket;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;

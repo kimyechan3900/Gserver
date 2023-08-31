@@ -1,6 +1,5 @@
-package com.example.Gserver.Service;
+package com.example.Gserver.Local;
 
-import com.example.Gserver.Repository.CroomRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.example.Gserver.Controller;
+package com.example.Gserver.Websocket;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;

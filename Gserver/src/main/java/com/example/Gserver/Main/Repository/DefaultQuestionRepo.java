@@ -1,6 +1,6 @@
-package com.example.Gserver.Repository;
+package com.example.Gserver.Main.Repository;
 
-import com.example.Gserver.Model.DefaultQuestion;
+import com.example.Gserver.Main.Model.DefaultQuestion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

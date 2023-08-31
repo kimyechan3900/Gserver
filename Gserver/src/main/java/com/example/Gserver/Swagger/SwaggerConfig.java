@@ -1,4 +1,4 @@
-package com.example.Gserver.Config;
+package com.example.Gserver.Swagger;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.example.Gserver.Repository;
+package com.example.Gserver.Local;
 
 import com.example.Gserver.Local.GRoom;
 import org.springframework.stereotype.Repository;

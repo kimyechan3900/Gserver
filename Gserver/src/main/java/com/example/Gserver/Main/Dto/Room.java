@@ -1,11 +1,11 @@
-package com.example.Gserver.Dto;
+package com.example.Gserver.Main.Dto;
+
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class CustomQuery {
+public class Room {
     String roomNumber;
-    String question;
 }

@@ -1,5 +1,7 @@
-package com.example.Gserver.Service;
+package com.example.Gserver.Main.Service;
 
+import com.example.Gserver.Main.Model.*;
+import com.example.Gserver.Main.Repository.*;
 import com.example.Gserver.Model.*;
 import com.example.Gserver.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
