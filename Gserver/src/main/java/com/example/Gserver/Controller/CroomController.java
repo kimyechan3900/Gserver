@@ -1,15 +1,11 @@
 package com.example.Gserver.Controller;
 
-import com.example.Gserver.Dto.Participation;
-import com.example.Gserver.Service.CroomService;
+import com.example.Gserver.Model.Participation;
 import com.example.Gserver.Service.GroomService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -52,6 +48,14 @@ public class CroomController {
         service.Participation(roomNumber,NickName);
         String response = "ok";
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/SearchHost",method = RequestMethod.POST)
+    @ApiOperation(value="방장가져오기", notes="방넘버(String)")
+    public ResponseEntity<Participation> SearchHost(@RequestBody Map<String,Object> requestMap){
+        String roomNumber = (String)requestMap.get("roomNumber");
+        Participation participation = service.SearchHost(roomNumber);
+        return new ResponseEntity<>(participation, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/GetParticipation",method = RequestMethod.POST)
@@ -150,6 +154,7 @@ public class CroomController {
         String response = "ok";
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 
     @RequestMapping(value = "/CreateCustomQuery",method = RequestMethod.POST)
     @ApiOperation(value="커스텀질문생성", notes="방넘버(String)")

@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Gserver.iml" filepath="$PROJECT_DIR$/.idea/Gserver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Gserver.Gserver.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Gserver.Gserver.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Gserver.Gserver.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Gserver.Gserver.test.iml" />
     </modules>
   </component>
 </project>

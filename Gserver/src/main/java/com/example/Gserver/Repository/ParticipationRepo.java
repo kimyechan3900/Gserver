@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
+@EnableJpaRepositories
 public interface ParticipationRepo extends JpaRepository<Participation,Long> {
 
     @Query("SELECT count(*) FROM Participation p WHERE p.RoomID = :RoomID")
@@ -30,6 +32,9 @@ public interface ParticipationRepo extends JpaRepository<Participation,Long> {
     @Query("SELECT p.It FROM Participation p WHERE p.ParticipationID = :ParticipationID")
     boolean CheckIt(@Param("ParticipationID") int ParticipationID);
 
+    @Query("SELECT p FROM Participation p WHERE p.RoomID = :RoomID and p.RoomOwner = true")
+    Participation getByRoomIDAndRoomOwner(@Param("RoomID")Groom RoomID);
+
     @Query("SELECT p.NickName FROM Participation p WHERE p.RoomID = :RoomID AND p.It = true")
     String getIt(@Param("RoomID") Groom RoomID);
 
@@ -40,6 +45,9 @@ public interface ParticipationRepo extends JpaRepository<Participation,Long> {
     @Query("SELECT NickName FROM Participation p WHERE p.RoomID = :RoomID")
     List<String> getParticipation(@Param("RoomID") Groom RoomID);
 
+
+    @Query("SELECT p FROM Participation p WHERE p.RoomID = :RoomID AND p.RoomOwner = false")
+    List<Participation> getNextRoomHostList(@Param("RoomID") Groom RoomID);
 
 
 
@@ -72,6 +80,12 @@ public interface ParticipationRepo extends JpaRepository<Participation,Long> {
     @Transactional
     @Query("UPDATE Participation p SET p.It = false WHERE p.ParticipationID = :ParticipationID ")
     void FalseIt(@Param("ParticipationID") int ParticipationID);
+
+
+    //List<Participation> findByRoomIDAndRoomOwnerOrderByParticipationIDAsc(Groom RoomID, boolean RoomOwner);
+
+
+
 
 
 

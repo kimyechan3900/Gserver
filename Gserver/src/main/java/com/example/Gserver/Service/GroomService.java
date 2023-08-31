@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -79,6 +80,18 @@ public class GroomService {
             return 0;
         }
     }
+
+    public Participation SearchHost(String roomNumber) {
+        if (groomRepo.existsById(roomNumber)) {
+            Groom groom = groomRepo.getById(roomNumber);
+            return participationRepo.getByRoomIDAndRoomOwner(groom);
+        } else {
+            System.out.println("방이 존재하지 않습니다.");
+            return null;
+        }
+    }
+
+
 
     public void GameStart(String roomNumber, int gameRepeatCount) {
         if (groomRepo.existsById(roomNumber)) {
@@ -171,6 +184,7 @@ public class GroomService {
         return participationRepo.getCorrectAnswer(groom,NickName);
     }
 
+    @Transactional
     public String ChangeIt(String roomNumber){
         if (groomRepo.existsById(roomNumber)){
             Groom groom = groomRepo.getById(roomNumber);
@@ -228,6 +242,7 @@ public class GroomService {
         }
     }
 
+    @Transactional
     public void ExitPlayer(String roomNumber,String NickName){
         if (groomRepo.existsById(roomNumber)) {
             Groom groom = groomRepo.getById(roomNumber);
@@ -236,8 +251,13 @@ public class GroomService {
                 playerAnswerRepo.deleteByParticipationId(participation);
                 participationRepo.deleteByRoomIDandNickName(groom, NickName);
                 groomRepo.minusParticipantCountById(roomNumber);
+
+                List<Participation> participationList = participationRepo.getNextRoomHostList(groom);
+                participationList.get(0).setRoomOwner(true);
+
                 if(groomRepo.getParticipationCount(roomNumber) == 0)
                     groomRepo.deleteByRoomID(roomNumber);
+
             }
             else
                 System.out.println("플레이어가 존재하지 않습니다.");
