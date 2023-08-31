@@ -32,7 +32,7 @@ public class SocketController {
         template.convertAndSend(String.format("/topic/room/%s", roomId),NickName);
     }*/
 
-    @SubscribeMapping("/room/{roomId}")// 웹소켓 구독 ("room//{roomId}")으로 들어오는 거는 다 받음.
+    @SubscribeMapping("/Room/{roomId}")// 웹소켓 구독 ("room//{roomId}")으로 들어오는 거는 다 받음.
     // '/topic/room/123'식으로 url 설정하면됨.
     //구독취소는 클라이언트쪽에서 같은 url로 구독 취소하면됨.
     public void ParticipateRoom(@DestinationVariable String roomId ,SimpMessageHeaderAccessor headerAccessor){

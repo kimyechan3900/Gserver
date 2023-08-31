@@ -13,7 +13,9 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="Gserver.Gserver.main" target="17" />
+      <module name="Gserver.Gserver.main~2" target="11" />
       <module name="Gserver.Gserver.test" target="17" />
+      <module name="Gserver.Gserver.test~2" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

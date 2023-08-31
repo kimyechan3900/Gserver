@@ -28,7 +28,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/room")
+        registry.addEndpoint("/Room")
                 .withSockJS() //웹소켓 연결을 하는 경로 설정
                 .setInterceptors(new HandshakeInterceptor(){
                     @Override
