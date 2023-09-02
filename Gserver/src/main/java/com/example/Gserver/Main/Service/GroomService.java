@@ -2,8 +2,8 @@ package com.example.Gserver.Main.Service;
 
 import com.example.Gserver.Main.Model.*;
 import com.example.Gserver.Main.Repository.*;
-import com.example.Gserver.Model.*;
-import com.example.Gserver.Repository.*;
+import com.example.Gserver.Main.Model.*;
+import com.example.Gserver.Main.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -53,9 +53,14 @@ public class GroomService {
         if (groomRepo.existsById(roomNumber)) {
             Groom groom = groomRepo.getById(roomNumber);
             //System.out.println(groomRepo.existsById(roomNumber));
-            Participation participation = new Participation(groom, NickName, false, 0,false);
-            participationRepo.save(participation);
-            groomRepo.plusParticipantCountById(roomNumber);
+            if(participationRepo.existsByRoomIDAndNickName(groom,NickName)) { //방에 해당 닉네임이 있을때
+                System.out.println("이미 같은 닉네임의 사용자가 존재합니다.");
+            }
+            else {
+                Participation participation = new Participation(groom, NickName, false, 0, false);
+                participationRepo.save(participation);
+                groomRepo.plusParticipantCountById(roomNumber);
+            }
             //groomRepo.plusParticipantCountById(roomNumber);
             //groom.setParticipationCount(groom.getParticipationCount()+1);
         } else {
@@ -73,6 +78,7 @@ public class GroomService {
             return null;
         }
     }
+
 
     public int RoomPersonnelCount(String roomNumber) {
         if (groomRepo.existsById(roomNumber)) {
@@ -133,6 +139,7 @@ public class GroomService {
         return null;
     }
 
+
     public void CompleteAnswer(String roomNumber, String NickName, String Answer) {
         if (groomRepo.existsById(roomNumber)) {
             Groom groom = groomRepo.getById(roomNumber);
@@ -148,6 +155,7 @@ public class GroomService {
             System.out.println("해당 방이 존재하지 않습니다.");
         }
     }
+
 
     public void CurrentRoomCount(){
         System.out.println(groomRepo.count());
@@ -203,11 +211,9 @@ public class GroomService {
                 System.out.println(ParticipationID+"\n\n\n\n\n\n"+(i)+"   "+current+"\n\n\n\n");
                 if(i==current) {
                     participationRepo.TrueIt(ParticipationID);
-                    System.out.println("!@#!@#!@#$@$%#$^%$#%^$%^$%^");
                 }
                 else {
                     participationRepo.FalseIt(ParticipationID);
-                    System.out.println("!!!!!!1");
                 }
             }
             groomRepo.plusItCountById(roomNumber);
