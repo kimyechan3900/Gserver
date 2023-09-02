@@ -21,7 +21,7 @@ import java.util.Map;
 
 
 @SpringJUnitConfig
-@WebMvcTest(CroomController.class)
+@WebMvcTest(CroomController.class) //수정 필요
 public class ControllerTest {
 
     @Autowired

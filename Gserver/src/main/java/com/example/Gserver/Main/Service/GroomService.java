@@ -129,6 +129,7 @@ public class GroomService {
         if(groomRepo.existsById(roomNumber)) {
             Random random = new Random();
             int count = defaultQuestionRepo.getQustionCount();
+            System.out.println("my test   "+ count);
             int randomNumber = random.nextInt(count);
             groomRepo.plusRoundById(roomNumber);
             return defaultQuestionRepo.getQuestion(randomNumber);
@@ -217,6 +218,14 @@ public class GroomService {
                 }
             }
             groomRepo.plusItCountById(roomNumber);
+            return participationRepo.getIt(groom);
+        }
+        return null;
+    }
+
+    public String GetIt(String roomNumber){
+        if (groomRepo.existsById(roomNumber)){
+            Groom groom = groomRepo.getById(roomNumber);
             return participationRepo.getIt(groom);
         }
         return null;
