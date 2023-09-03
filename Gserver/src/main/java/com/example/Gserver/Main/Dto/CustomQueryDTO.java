@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Participation {
+public class CustomQueryDTO {
     String roomNumber;
-    String NickName;
+    String question;
 }

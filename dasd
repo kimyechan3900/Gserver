@@ -1,0 +1,87 @@
+[33mcommit b43bd114487cb32374f681743f7aa162a2d079be[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/Test2[m[33m)[m
+Author: kimyechan <tioon74@naver.com>
+Date:   Fri Sep 1 19:45:40 2023 +0900
+
+    Test
+
+[33mcommit 2e6fb193c3021f6a3f29e88041d006f8f14a237d[m[33m ([m[1;31morigin/master[m[33m)[m
+Author: kimyechan <tioon74@naver.com>
+Date:   Fri Sep 1 03:52:22 2023 +0900
+
+    File Update & Image Update
+
+[33mcommit 2f20b55cd3d1a55fc1855a7f24042940628236ec[m
+Author: kimyechan <tioon74@naver.com>
+Date:   Thu Aug 31 19:18:26 2023 +0900
+
+    Java version Update
+
+[33mcommit b8a6fb0391d5693a339419bb1b01308ace94e77b[m
+Author: kimyechan <tioon74@naver.com>
+Date:   Thu Aug 31 14:41:44 2023 +0900
+
+    Host Update
+
+[33mcommit bcd99a094da1b34c0155f303fa75b803383e42df[m
+Author: kimyechan <tioon74@naver.com>
+Date:   Tue Aug 29 00:46:59 2023 +0900
+
+    Dto Update
+
+[33mcommit 96bdf076f49d5b15f4142349c3af3ae9f710528d[m
+Author: kimyechan <tioon74@naver.com>
+Date:   Mon Aug 28 23:54:00 2023 +0900
+
+    Dto Update
+
+[33mcommit a4639819d95834cdd4aab9ccd6afa124160bc5c8[m
+Author: kimyechan <tioon74@naver.com>
+Date:   Mon Aug 28 18:50:55 2023 +0900
+
+    Dto Update
+
+[33mcommit bcb8a3cdb83fb03c4b906c7491c80bd6fce9aec2[m
+Merge: 0c6894d 71f8798
+Author: kimyechan <tioon74@naver.com>
+Date:   Thu Aug 10 20:05:36 2023 +0900
+
+    Merge remote-tracking branch 'origin/master'
+    
+    # Conflicts:
+    #       Gserver/src/main/java/com/example/Gserver/Controller/SocketController.java
+
+[33mcommit 0c6894d75b910048d05f07a92f78e75d05291d02[m
+Author: kimyechan <tioon74@naver.com>
+Date:   Mon Aug 7 02:30:39 2023 +0900
+
+    second
+
+[33mcommit 71f8798c193dfbc994138d3ace76e2e806b14213[m
+Author: kimyechan <tioon74@naver.com>
+Date:   Mon Aug 7 02:30:39 2023 +0900
+
+    second
+
+[33mcommit c85e341601d0bf6a1c9b3311617d9f094f8d772e[m
+Author: kimyechan <tioon74@naver.com>
+Date:   Tue Aug 1 22:49:17 2023 +0900
+
+    second
+
+[33mcommit dbafab60e40c016d525b89a20611cabdc17050a2[m
+Author: kimyechan <tioon74@naver.com>
+Date:   Mon Jul 31 01:09:14 2023 +0900
+
+    second
+
+[33mcommit 5745dd3207b80e68a9b3b74aa62a63464ffed5c4[m
+Author: kimyechan <tioon74@naver.com>
+Date:   Sun Jul 30 23:24:30 2023 +0900
+
+    second
+
+[33mcommit 6b486b111700a5c027e704e6dd9a31c0790f0a19[m
+Author: kimyechan <tioon74@naver.com>
+Date:   Mon Jul 17 02:23:57 2023 +0900
+
+    Initial commit

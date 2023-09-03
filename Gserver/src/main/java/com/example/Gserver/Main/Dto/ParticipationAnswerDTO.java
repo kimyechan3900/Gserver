@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ParticipationAnswer {
+public class ParticipationAnswerDTO {
     String roomNumber;
     String NickName;
     String Answer;

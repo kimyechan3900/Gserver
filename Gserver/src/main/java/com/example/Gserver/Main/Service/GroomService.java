@@ -1,5 +1,7 @@
 package com.example.Gserver.Main.Service;
 
+import com.example.Gserver.Error.CustomException;
+import com.example.Gserver.Error.ErrorCode;
 import com.example.Gserver.Main.Model.*;
 import com.example.Gserver.Main.Repository.*;
 import com.example.Gserver.Main.Model.*;
@@ -38,8 +40,7 @@ public class GroomService {
 
     public void CreateRoom(String roomNumber, String NickName) {
         if (groomRepo.existsById(roomNumber)) {
-            System.out.println("이미 존재하는 방입니다.");
-            return ;
+            throw new CustomException(ErrorCode.DUPLICATED_ROOMNUMBER);
         } else {
             Groom groom = new Groom(roomNumber, 1, 0, 0, 0);//방 생성
             groomRepo.save(groom);
@@ -54,7 +55,7 @@ public class GroomService {
             Groom groom = groomRepo.getById(roomNumber);
             //System.out.println(groomRepo.existsById(roomNumber));
             if(participationRepo.existsByRoomIDAndNickName(groom,NickName)) { //방에 해당 닉네임이 있을때
-                System.out.println("이미 같은 닉네임의 사용자가 존재합니다.");
+                throw new CustomException(ErrorCode.DUPLICATED_PARTICIPATION);
             }
             else {
                 Participation participation = new Participation(groom, NickName, false, 0, false);
@@ -64,8 +65,7 @@ public class GroomService {
             //groomRepo.plusParticipantCountById(roomNumber);
             //groom.setParticipationCount(groom.getParticipationCount()+1);
         } else {
-            System.out.println("방이 존재하지 않습니다.");
-            return;
+            throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
         }
     }
 
@@ -74,8 +74,7 @@ public class GroomService {
             Groom groom = groomRepo.getById(roomNumber);
             return participationRepo.getParticipation(groom);
         } else {
-            System.out.println("방이 존재하지 않습니다.");
-            return null;
+            throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
         }
     }
 
@@ -84,8 +83,7 @@ public class GroomService {
         if (groomRepo.existsById(roomNumber)) {
             return participationRepo.countByRoomID(roomNumber);
         } else {
-            System.out.println("해당 방이 존재하지 않습니다.");
-            return 0;
+            throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
         }
     }
 
@@ -94,8 +92,7 @@ public class GroomService {
             Groom groom = groomRepo.getById(roomNumber);
             return participationRepo.getByRoomIDAndRoomOwner(groom);
         } else {
-            System.out.println("방이 존재하지 않습니다.");
-            return null;
+            throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
         }
     }
 
@@ -105,7 +102,7 @@ public class GroomService {
         if (groomRepo.existsById(roomNumber)) {
             groomRepo.SetGameRepeatCount(roomNumber, gameRepeatCount);
         } else {
-            System.out.println("해당 방이 존재하지 않습니다.");
+            throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
         }
     }
 
@@ -121,7 +118,7 @@ public class GroomService {
             customQueryRepo.save(customQuestion);
         }
         else{
-            System.out.println("해당 방이 존재하지 않습니다.");
+            throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
         }
     }
 
@@ -129,15 +126,16 @@ public class GroomService {
         if(groomRepo.existsById(roomNumber)) {
             Random random = new Random();
             int count = defaultQuestionRepo.getQustionCount();
+            if(count == 0)
+                throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
             System.out.println("my test   "+ count);
             int randomNumber = random.nextInt(count);
             groomRepo.plusRoundById(roomNumber);
             return defaultQuestionRepo.getQuestion(randomNumber);
         }
         else {
-            System.out.println("해당 방이 존재하지 않습니다.");
+            throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
         }
-        return null;
     }
 
 
@@ -150,10 +148,10 @@ public class GroomService {
                 PlayerAnswer playerAnswer = new PlayerAnswer(participation,groom, Count + 1, Answer);
                 playerAnswerRepo.save(playerAnswer);
             } else {
-                System.out.println("해당 참여자가 존재하지 않습니다.");
+                throw new CustomException(ErrorCode.NOT_EXIST_PARTICIPATION);
             }
         } else {
-            System.out.println("해당 방이 존재하지 않습니다.");
+            throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
         }
     }
 
@@ -174,9 +172,11 @@ public class GroomService {
             myPart = participationRepo.getByRoomIDAndNickName(groom,NickName);
         }
         else{
-            System.out.println("해당 방이 존재하지 않습니다.");
-            return -1;
+            throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
         }
+
+        if(selectNickName.length != count-1 || selectAnswer.length != count-1)
+            throw new CustomException(ErrorCode.INVALID_INPUT_LIST);
 
         for(int i=0;i<count-1;i++) {
             Participation participation = participationRepo.getByRoomIDAndNickName(groom, selectNickName[i]);
@@ -228,7 +228,7 @@ public class GroomService {
             Groom groom = groomRepo.getById(roomNumber);
             return participationRepo.getIt(groom);
         }
-        return null;
+        throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
     }
 
     public List<String> GetAnswers(String roomNumber,int CurrentCount){
@@ -238,9 +238,9 @@ public class GroomService {
                 return playerAnswerRepo.getAnswers(groom,CurrentCount);
             }
             else
-                return null;
+                throw new CustomException(ErrorCode.INVALID_LIST);
         }
-        return null;
+        throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
     }
 
     public int CorrectResult(String roomNumber,String NickName){
@@ -250,12 +250,10 @@ public class GroomService {
                 Participation participation = participationRepo.getByRoomIDAndNickName(groom, NickName);
                 return participationRepo.getCorrectAnswer(groom,NickName);
             } else {
-                System.out.println("해당 참여자가 존재하지 않습니다.");
-                return -1;
+                throw new CustomException(ErrorCode.NOT_EXIST_PARTICIPATION);
             }
         } else {
-            System.out.println("해당 방이 존재하지 않습니다.");
-            return -1;
+            throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
         }
     }
 
@@ -277,10 +275,10 @@ public class GroomService {
 
             }
             else
-                System.out.println("플레이어가 존재하지 않습니다.");
+                throw new CustomException(ErrorCode.NOT_EXIST_PARTICIPATION);
         }
         else
-            System.out.println("방이 존재하지 않습니다.");
+            throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
     }
 
     public void FinishGame(String roomNumber){
@@ -291,7 +289,7 @@ public class GroomService {
             customQueryRepo.deleteByRoomID(groom);
             groomRepo.deleteByRoomID(roomNumber);
         } else {
-            System.out.println("방이 존재하지 않습니다.");
+            throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
         }
     }
 
