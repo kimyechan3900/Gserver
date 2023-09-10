@@ -2,6 +2,7 @@ package com.example.Gserver.Main.Controller;
 
 import com.example.Gserver.Error.CustomException;
 import com.example.Gserver.Error.ErrorCode;
+import com.example.Gserver.Main.Dto.*;
 import com.example.Gserver.Main.Model.Participation;
 import com.example.Gserver.Main.Service.GroomService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,150 +34,129 @@ public class CroomController {
 
     @RequestMapping(value = "/CreateRoom",method = RequestMethod.POST)
     @ApiOperation(value="방장 방생성", notes="방넘버(String),방장닉네임(String)")
-    public ResponseEntity<String> CreateRoom(@RequestBody Map<String,Object> requestMap){
-        System.out.println(requestMap);
-        String roomNumber = (String) requestMap.get("roomNumber");
-        String NickName = (String) requestMap.get("NickName");
-        if(roomNumber == null || NickName == null)
+    public ResponseEntity<String> CreateRoom(@RequestBody ParticipationDTO participationDTO){
+        if(participationDTO.getRoomNumber() == null || participationDTO.getNickName() == null)
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
-        service.CreateRoom(roomNumber,NickName);
+        service.CreateRoom(participationDTO);
         String response = "ok";
         System.out.println("헬로");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @RequestMapping(value = "/ParticipateRoom",method = RequestMethod.POST)
     @ApiOperation(value="참가자 방참가", notes="방넘버(String),참가자닉네임(String)")
-    public ResponseEntity<String> ParticipateRoom(@RequestBody Map<String,Object> requestMap){
-        String roomNumber = (String)requestMap.get("roomNumber");
-        String NickName = (String) requestMap.get("NickName");
-        if(roomNumber == null || NickName == null)
+    public ResponseEntity<String> ParticipateRoom(@RequestBody ParticipationDTO participationDTO){
+        if(participationDTO.getRoomNumber() == null || participationDTO.getNickName() == null)
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
-        service.Participation(roomNumber,NickName);
+        service.Participation(participationDTO);
         String response = "ok";
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/SearchHost",method = RequestMethod.POST)
     @ApiOperation(value="방장가져오기", notes="방넘버(String)")
-    public ResponseEntity<Participation> SearchHost(@RequestBody Map<String,Object> requestMap){
-        String roomNumber = (String)requestMap.get("roomNumber");
-        Participation participation = service.SearchHost(roomNumber);
-        if(roomNumber == null)
+    public ResponseEntity<Participation> SearchHost(@RequestBody RoomDTO roomDTO){
+        Participation participation = service.SearchHost(roomDTO);
+        if(roomDTO.getRoomNumber() == null)
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
         return new ResponseEntity<>(participation, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/GetParticipation",method = RequestMethod.POST)
     @ApiOperation(value="참가자 출력", notes="방넘버(String)")
-    public ResponseEntity<List<String>> GetParticipation(@RequestBody Map<String,Object> requestMap){
-        String roomNumber = (String)requestMap.get("roomNumber");
-        if(roomNumber == null)
+    public ResponseEntity<List<String>> GetParticipation(@RequestBody RoomDTO roomDTO){
+        if(roomDTO.getRoomNumber() == null)
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
-        List<String> Answers = service.getParticipation(roomNumber);
+        List<String> Answers = service.getParticipation(roomDTO);
         return new ResponseEntity<>(Answers, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/GameStart",method = RequestMethod.POST)
     @ApiOperation(value="게임 시작", notes="방넘버(String),라운드개수(String)")
-    public ResponseEntity<String> GameStart(@RequestBody Map<String,Object> requestMap){
-        String roomNumber = (String)requestMap.get("roomNumber");
-        int gameRepeatCount = (int) requestMap.get("gameRepeatCount");
-        if(roomNumber == null || gameRepeatCount == 0)
+    public ResponseEntity<String> GameStart(@RequestBody RoundDTO roundDTO){
+        if(roundDTO.getRoomNumber() == null || roundDTO.getRound() == 0)
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
-        service.GameStart(roomNumber,gameRepeatCount);
+        service.GameStart(roundDTO);
         String response = "ok";
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @RequestMapping(value = "RequestQuestion",method = RequestMethod.POST)
     @ApiOperation(value="질문 랜덤가져오기", notes="방넘버(String)")
-    public ResponseEntity<String> RequestQuestion(@RequestBody Map<String,Object> requestMap){
-        String roomNumber = (String)requestMap.get("roomNumber");
-        if(roomNumber == null)
+    public ResponseEntity<String> RequestQuestion(@RequestBody RoomDTO roomDTO){
+        if(roomDTO.getRoomNumber() == null)
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
-        String question = service.GetQuestion(roomNumber);
+        String question = service.GetQuestion(roomDTO);
         return new ResponseEntity<>(question, HttpStatus.OK);
     }
 
     @RequestMapping(value = "CompleteAnswer",method = RequestMethod.POST)
     @ApiOperation(value="질문 답변 완료", notes="방넘버(String),닉네임(String),답변내용(String)")
-    public ResponseEntity<String> finishAnswer(@RequestBody Map<String,Object> requestMap){
-        String roomNumber = (String)requestMap.get("roomNumber");
-        String NickName = (String) requestMap.get("NickName");
-        String Answer = (String)requestMap.get("Answer");
-        if(roomNumber == null || NickName == null || Answer == null)
+    public ResponseEntity<String> finishAnswer(@RequestBody ParticipationAnswerDTO participationAnswerDTO){
+        if(participationAnswerDTO.getRoomNumber() == null || participationAnswerDTO.getNickName() == null || participationAnswerDTO.getAnswer() == null)
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
-        service.CompleteAnswer(roomNumber,NickName,Answer);
+        service.CompleteAnswer(participationAnswerDTO);
         String response = "ok";
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @RequestMapping(value = "GetAnswers",method = RequestMethod.POST)
     @ApiOperation(value="참여자 질문들 가져오기", notes="방넘버(String), 라운드숫자(String)")
-    public ResponseEntity<List<String>> GetAnswer(@RequestBody Map<String,Object> requestMap){
-        String roomNumber = (String)requestMap.get("roomNumber");
-        int CurrentCount = (int) requestMap.get("gameRepeatCount");
-        if(roomNumber == null || CurrentCount == 0)
+    public ResponseEntity<List<String>> GetAnswer(@RequestBody RoundDTO roundDTO){
+        if(roundDTO.getRoomNumber() == null || roundDTO.getRound() == 0)
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
-        List<String> Answers = service.GetAnswers(roomNumber,CurrentCount);
+        List<String> Answers = service.GetAnswers(roundDTO);
         return new ResponseEntity<>(Answers, HttpStatus.OK);
     }
 
     @RequestMapping(value = "ChangeIt",method = RequestMethod.POST)
     @ApiOperation(value="술래 체인지", notes="방넘버(String)")
-    public ResponseEntity<String> ChangeIt(@RequestBody Map<String,Object> requestMap){
-        String roomNumber = (String)requestMap.get("roomNumber");
-        if(roomNumber == null )
+    public ResponseEntity<String> ChangeIt(@RequestBody RoomDTO roomDTO){
+        if(roomDTO.getRoomNumber() == null )
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
-        String ItName = service.ChangeIt(roomNumber);
+        String ItName = service.ChangeIt(roomDTO);
         return new ResponseEntity<>(ItName, HttpStatus.OK);
     }
 
     @RequestMapping(value = "GetIt",method = RequestMethod.POST)
     @ApiOperation(value="술래 가져오기", notes="방넘버(String)")
-    public ResponseEntity<String> GetIt(@RequestBody Map<String,Object> requestMap){
-        String roomNumber = (String)requestMap.get("roomNumber");
-        if(roomNumber == null )
+    public ResponseEntity<String> GetIt(@RequestBody RoomDTO roomDTO){
+        if(roomDTO.getRoomNumber() == null )
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
-        String ItName = service.GetIt(roomNumber);
+        String ItName = service.GetIt(roomDTO);
         return new ResponseEntity<>(ItName, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/GuessPerson",method = RequestMethod.POST)
     @ApiOperation(value="질문 맞추기완료", notes="방넘버(String),본인닉네임(String),대상닉네임(String),대상 답변(String)")
-    public ResponseEntity<Integer> GuessPerson(@RequestBody Map<String,Object> requestMap){
+    public ResponseEntity<Integer> GuessPerson(@RequestBody ParticipationAnswerListDTO participationAnswerListDTO){
         ObjectMapper objectMapper = new ObjectMapper();
 
-        String roomNumber = (String)requestMap.get("roomNumber");
+        /*String roomNumber = (String)requestMap.get("roomNumber");
         String NickName = (String) requestMap.get("NickName");
         String[] selectNickName = objectMapper.convertValue(requestMap.get("selectNickName"), String[].class);
-        String[] selectAnswer =objectMapper.convertValue(requestMap.get("selectAnswer"), String[].class);
-        if(roomNumber == null || NickName == null || selectNickName == null || selectAnswer == null)
+        String[] selectAnswer =objectMapper.convertValue(requestMap.get("selectAnswer"), String[].class);*/
+        if(participationAnswerListDTO.getRoomNumber()== null || participationAnswerListDTO.getNickName() == null || participationAnswerListDTO.getNickNameList() == null || participationAnswerListDTO.getAnswerList() == null)
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
-        int result = service.CompareAnswer(roomNumber,NickName,selectNickName, selectAnswer);
+        int result = service.CompareAnswer(participationAnswerListDTO);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 
     @RequestMapping(value = "/Result",method = RequestMethod.POST)
     @ApiOperation(value="질문 검증 및 맞춘 개수 구하기", notes="방넘버(String),본인닉네임(String)")
-    public ResponseEntity<Integer> Result(@RequestBody Map<String,Object> requestMap){
-        String roomNumber = (String)requestMap.get("roomNumber");
-        String NickName = (String) requestMap.get("NickName");
-        if(roomNumber == null || NickName == null)
+    public ResponseEntity<Integer> Result(@RequestBody ParticipationDTO participationDTO){
+        if(participationDTO.getRoomNumber() == null || participationDTO.getNickName() == null)
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
-        int result = service.CorrectResult(roomNumber,NickName);
+        int result = service.CorrectResult(participationDTO);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/Exit",method = RequestMethod.POST)
     @ApiOperation(value="플레이어 방 나가기", notes="방넘버(String),본인닉네임(String)")
-    public ResponseEntity<String> Exit(@RequestBody Map<String,Object> requestMap){
-        String roomNumber = (String)requestMap.get("roomNumber");
-        String NickName = (String) requestMap.get("NickName");
-        if(roomNumber == null || NickName == null)
+    public ResponseEntity<String> Exit(@RequestBody ParticipationDTO participationDTO){
+        if(participationDTO.getRoomNumber() == null || participationDTO.getRoomNumber() == null)
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
-        service.ExitPlayer(roomNumber,NickName);
+        service.ExitPlayer(participationDTO);
         String response = "ok";
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -184,24 +164,21 @@ public class CroomController {
 
     @RequestMapping(value = "/Finish",method = RequestMethod.POST)
     @ApiOperation(value="게임 종료", notes="방넘버(String)")
-    public ResponseEntity<String> Finish(@RequestBody Map<String,Object> requestMap){
-        String roomNumber = (String)requestMap.get("roomNumber");
-        if(roomNumber == null )
+    public ResponseEntity<String> Finish(@RequestBody RoomDTO roomDTO){
+        if(roomDTO.getRoomNumber() == null )
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
-        service.FinishGame(roomNumber);
+        service.FinishGame(roomDTO);
         String response = "ok";
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
     @RequestMapping(value = "/CreateCustomQuery",method = RequestMethod.POST)
-    @ApiOperation(value="커스텀질문생성", notes="방넘버(String)")
-    public ResponseEntity<String> CreateCustomQuery(@RequestBody Map<String,Object> requestMap){
-        String roomNumber = (String)requestMap.get("roomNumber");
-        String question = (String)requestMap.get("question");
-        if(roomNumber == null || question == null)
+    @ApiOperation(value="커스텀질문생성", notes="방넘버(String),커스텀질문(String)")
+    public ResponseEntity<String> CreateCustomQuery(@RequestBody CustomQueryDTO customQueryDTO){
+        if(customQueryDTO.getRoomNumber() == null || customQueryDTO.getQuestion() == null)
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
-        service.SaveCustomQuestion(roomNumber,question);
+        service.SaveCustomQuestion(customQueryDTO);
         String response = "ok";
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

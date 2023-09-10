@@ -2,6 +2,7 @@ package com.example.Gserver.Main.Service;
 
 import com.example.Gserver.Error.CustomException;
 import com.example.Gserver.Error.ErrorCode;
+import com.example.Gserver.Main.Dto.*;
 import com.example.Gserver.Main.Model.*;
 import com.example.Gserver.Main.Repository.*;
 import com.example.Gserver.Main.Model.*;
@@ -38,7 +39,9 @@ public class GroomService {
         this.entityManager = entityManager;
     }
 
-    public void CreateRoom(String roomNumber, String NickName) {
+    public void CreateRoom(ParticipationDTO participationDTO) {
+        String roomNumber = participationDTO.getRoomNumber();
+        String NickName = participationDTO.getNickName();
         if (groomRepo.existsById(roomNumber)) {
             throw new CustomException(ErrorCode.DUPLICATED_ROOMNUMBER);
         } else {
@@ -50,7 +53,9 @@ public class GroomService {
         }
     }
 
-    public void Participation(String roomNumber, String NickName) {
+    public void Participation(ParticipationDTO participationDTO) {
+        String roomNumber = participationDTO.getRoomNumber();
+        String NickName = participationDTO.getNickName();
         if (groomRepo.existsById(roomNumber)) {
             Groom groom = groomRepo.getById(roomNumber);
             //System.out.println(groomRepo.existsById(roomNumber));
@@ -69,7 +74,8 @@ public class GroomService {
         }
     }
 
-    public List<String> getParticipation(String roomNumber) {
+    public List<String> getParticipation(RoomDTO roomDTO) {
+        String roomNumber = roomDTO.getRoomNumber();
         if (groomRepo.existsById(roomNumber)) {
             Groom groom = groomRepo.getById(roomNumber);
             return participationRepo.getParticipation(groom);
@@ -79,7 +85,8 @@ public class GroomService {
     }
 
 
-    public int RoomPersonnelCount(String roomNumber) {
+    public int RoomPersonnelCount(RoomDTO roomDTO) {
+        String roomNumber = roomDTO.getRoomNumber();
         if (groomRepo.existsById(roomNumber)) {
             return participationRepo.countByRoomID(roomNumber);
         } else {
@@ -87,7 +94,8 @@ public class GroomService {
         }
     }
 
-    public Participation SearchHost(String roomNumber) {
+    public Participation SearchHost(RoomDTO roomDTO) {
+        String roomNumber = roomDTO.getRoomNumber();
         if (groomRepo.existsById(roomNumber)) {
             Groom groom = groomRepo.getById(roomNumber);
             return participationRepo.getByRoomIDAndRoomOwner(groom);
@@ -98,7 +106,9 @@ public class GroomService {
 
 
 
-    public void GameStart(String roomNumber, int gameRepeatCount) {
+    public void GameStart(RoundDTO roundDTO) {
+        String roomNumber = roundDTO.getRoomNumber();
+        int gameRepeatCount = roundDTO.getRound();
         if (groomRepo.existsById(roomNumber)) {
             groomRepo.SetGameRepeatCount(roomNumber, gameRepeatCount);
         } else {
@@ -111,7 +121,9 @@ public class GroomService {
         defaultQuestionRepo.save(defaultQuestion);
     }
 
-    public void SaveCustomQuestion(String roomNumber, String question){
+    public void SaveCustomQuestion(CustomQueryDTO customQueryDTO){
+        String roomNumber = customQueryDTO.getRoomNumber();
+        String question = customQueryDTO.getQuestion();
         if (groomRepo.existsById(roomNumber)) {
             Groom groom = groomRepo.getById(roomNumber);
             CustomQuery customQuestion = new CustomQuery(groom,question);
@@ -122,7 +134,8 @@ public class GroomService {
         }
     }
 
-    public String GetQuestion(String roomNumber){
+    public String GetQuestion(RoomDTO roomDTO){
+        String roomNumber = roomDTO.getRoomNumber();
         if(groomRepo.existsById(roomNumber)) {
             Random random = new Random();
             int count = defaultQuestionRepo.getQustionCount();
@@ -139,7 +152,10 @@ public class GroomService {
     }
 
 
-    public void CompleteAnswer(String roomNumber, String NickName, String Answer) {
+    public void CompleteAnswer(ParticipationAnswerDTO participationAnswerDTO) {
+        String roomNumber = participationAnswerDTO.getRoomNumber();
+        String NickName = participationAnswerDTO.getNickName();
+        String Answer = participationAnswerDTO.getAnswer();
         if (groomRepo.existsById(roomNumber)) {
             Groom groom = groomRepo.getById(roomNumber);
             if (participationRepo.existsByRoomIDAndNickName(groom, NickName)) {
@@ -160,7 +176,11 @@ public class GroomService {
         System.out.println(groomRepo.count());
     }
 
-    public int CompareAnswer(String roomNumber,String NickName,String selectNickName[],String selectAnswer[]){
+    public int CompareAnswer(ParticipationAnswerListDTO participationAnswerListDTO){
+        String roomNumber = participationAnswerListDTO.getRoomNumber();
+        String NickName = participationAnswerListDTO.getNickName();
+        String selectNickName[] = participationAnswerListDTO.getNickNameList();
+        String selectAnswer[] = participationAnswerListDTO.getAnswerList();
         int count;
         int round;
         Groom groom;
@@ -196,7 +216,8 @@ public class GroomService {
     }
 
     @Transactional
-    public String ChangeIt(String roomNumber){
+    public String ChangeIt(RoomDTO roomDTO){
+        String roomNumber = roomDTO.getRoomNumber();
         if (groomRepo.existsById(roomNumber)){
             Groom groom = groomRepo.getById(roomNumber);
             if(groomRepo.getItCount(roomNumber) == groomRepo.getParticipationCount(roomNumber)){ // 술래 한바퀴 돌았을 때
@@ -223,7 +244,8 @@ public class GroomService {
         return null;
     }
 
-    public String GetIt(String roomNumber){
+    public String GetIt(RoomDTO roomDTO){
+        String roomNumber = roomDTO.getRoomNumber();
         if (groomRepo.existsById(roomNumber)){
             Groom groom = groomRepo.getById(roomNumber);
             return participationRepo.getIt(groom);
@@ -231,7 +253,9 @@ public class GroomService {
         throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
     }
 
-    public List<String> GetAnswers(String roomNumber,int CurrentCount){
+    public List<String> GetAnswers(RoundDTO roundDTO){
+        String roomNumber = roundDTO.getRoomNumber();
+        int CurrentCount = roundDTO.getRound();
         if (groomRepo.existsById(roomNumber)){
             Groom groom = groomRepo.getById(roomNumber);
             if(groomRepo.getParticipationCount(roomNumber)-1 == playerAnswerRepo.getAnswerCount(groom,CurrentCount)){
@@ -243,7 +267,9 @@ public class GroomService {
         throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
     }
 
-    public int CorrectResult(String roomNumber,String NickName){
+    public int CorrectResult(ParticipationDTO participationDTO){
+        String roomNumber = participationDTO.getRoomNumber();
+        String NickName = participationDTO.getNickName();
         if (groomRepo.existsById(roomNumber)) {
             Groom groom = groomRepo.getById(roomNumber);
             if (participationRepo.existsByRoomIDAndNickName(groom, NickName)) {
@@ -258,7 +284,9 @@ public class GroomService {
     }
 
     @Transactional
-    public void ExitPlayer(String roomNumber,String NickName){
+    public void ExitPlayer(ParticipationDTO participationDTO){
+        String roomNumber = participationDTO.getRoomNumber();
+        String NickName = participationDTO.getNickName();
         if (groomRepo.existsById(roomNumber)) {
             Groom groom = groomRepo.getById(roomNumber);
             if(participationRepo.existsByRoomIDAndNickName(groom,NickName)) {
@@ -281,7 +309,8 @@ public class GroomService {
             throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
     }
 
-    public void FinishGame(String roomNumber){
+    public void FinishGame(RoomDTO roomDTO){
+        String roomNumber = roomDTO.getRoomNumber();
         if (groomRepo.existsById(roomNumber)) {
             Groom groom = groomRepo.getById(roomNumber);
             playerAnswerRepo.deleteByRoomID(groom);

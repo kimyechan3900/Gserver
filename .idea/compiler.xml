@@ -8,14 +8,14 @@
         <processorPath useClasspath="false">
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.20/18bcea7d5df4d49227b4a0743a536208ce4825bb/lombok-1.18.20.jar" />
         </processorPath>
-        <module name="Gserver.Gserver.main~1" />
+        <module name="Gserver.Gserver.main~2" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="Gserver.Gserver.main" target="17" />
-      <module name="Gserver.Gserver.main~2" target="11" />
+      <module name="Gserver.Gserver.main~1" target="11" />
       <module name="Gserver.Gserver.test" target="17" />
-      <module name="Gserver.Gserver.test~2" target="11" />
+      <module name="Gserver.Gserver.test~1" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

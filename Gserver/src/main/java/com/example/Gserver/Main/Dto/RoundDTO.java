@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class GameStartDTO {
+public class RoundDTO {
     String roomNumber;
-    int gameRepeatCount;
+    int Round;
 }

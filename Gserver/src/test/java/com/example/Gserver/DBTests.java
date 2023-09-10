@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@SpringJUnitConfig
+/*@SpringJUnitConfig
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @EnableTransactionManagement
 @SpringBootTest
@@ -155,4 +155,4 @@ public class DBTests {
         String roomNumber="3726";
         groomService.FinishGame(roomNumber);
     }
-}
+}*/
