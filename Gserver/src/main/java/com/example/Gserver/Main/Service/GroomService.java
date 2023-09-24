@@ -286,21 +286,24 @@ public class GroomService {
     @Transactional
     public void ExitPlayer(ParticipationDTO participationDTO){
         String roomNumber = participationDTO.getRoomNumber();
-        String NickName = participationDTO.getNickName();
+        String nickName = participationDTO.getNickName();
         if (groomRepo.existsById(roomNumber)) {
             Groom groom = groomRepo.getById(roomNumber);
-            if(participationRepo.existsByRoomIDAndNickName(groom,NickName)) {
-                Participation participation = participationRepo.getByRoomIDAndNickName(groom, NickName);
+            if(participationRepo.existsByRoomIDAndNickName(groom,nickName)) {
+                Participation participation = participationRepo.getByRoomIDAndNickName(groom, nickName);
                 playerAnswerRepo.deleteByParticipationId(participation);
-                participationRepo.deleteByRoomIDandNickName(groom, NickName);
-                groomRepo.minusParticipantCountById(roomNumber);
 
-                List<Participation> participationList = participationRepo.getNextRoomHostList(groom);
-                participationList.get(0).setRoomOwner(true);
+                if(participationRepo.existsHostByRoomIDAndNickName(groom,nickName)){
+                    List<Participation> participationList = participationRepo.getNextRoomHostList(groom);
+                    if(!participationList.isEmpty())
+                        participationList.get(0).setRoomOwner(true); // 이부분이 문제인거같음
+                }
+
+                participationRepo.deleteByRoomIDandNickName(groom, nickName);
+                groomRepo.minusParticipantCountById(roomNumber);
 
                 if(groomRepo.getParticipationCount(roomNumber) == 0)
                     groomRepo.deleteByRoomID(roomNumber);
-
             }
             else
                 throw new CustomException(ErrorCode.NOT_EXIST_PARTICIPATION);

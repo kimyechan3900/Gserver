@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class RoundDTO {
     String roomNumber;
-    int Round;
+    int round;
 }

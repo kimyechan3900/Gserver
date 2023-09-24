@@ -27,7 +27,6 @@ public class CroomController {
 
     @GetMapping("/")
     public ResponseEntity<String> home() {
-        System.out.println("헬로");
         String response = "ok";
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -39,7 +38,6 @@ public class CroomController {
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
         service.CreateRoom(participationDTO);
         String response = "ok";
-        System.out.println("헬로");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @RequestMapping(value = "/ParticipateRoom",method = RequestMethod.POST)
@@ -154,8 +152,8 @@ public class CroomController {
     @RequestMapping(value = "/Exit",method = RequestMethod.POST)
     @ApiOperation(value="플레이어 방 나가기", notes="방넘버(String),본인닉네임(String)")
     public ResponseEntity<String> Exit(@RequestBody ParticipationDTO participationDTO){
-        if(participationDTO.getRoomNumber() == null || participationDTO.getRoomNumber() == null)
-            throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
+        if(participationDTO.getRoomNumber() == null || participationDTO.getNickName() == null)
+           throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
         service.ExitPlayer(participationDTO);
         String response = "ok";
         return new ResponseEntity<>(response, HttpStatus.OK);

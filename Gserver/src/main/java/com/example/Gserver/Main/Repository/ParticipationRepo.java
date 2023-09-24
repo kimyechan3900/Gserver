@@ -23,6 +23,9 @@ public interface ParticipationRepo extends JpaRepository<Participation,Long> {
     @Query("SELECT COUNT(p) > 0 FROM Participation p WHERE p.RoomID = :RoomID AND p.NickName = :NickName")
     boolean existsByRoomIDAndNickName(@Param("RoomID") Groom RoomID, @Param("NickName") String NickName);
 
+    @Query("SELECT COUNT(p) > 0 FROM Participation p WHERE p.RoomID = :RoomID AND p.NickName = :NickName AND p.RoomOwner = 0")
+    boolean existsHostByRoomIDAndNickName(@Param("RoomID") Groom RoomID, @Param("NickName") String NickName);
+
     @Query("SELECT p FROM Participation p WHERE p.RoomID = :RoomID and p.NickName = :NickName")
     Participation getByRoomIDAndNickName(@Param("RoomID") Groom RoomID, @Param("NickName") String NickName);
 

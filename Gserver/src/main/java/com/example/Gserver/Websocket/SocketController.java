@@ -35,21 +35,20 @@ public class SocketController {
     @SubscribeMapping("/Room/{roomId}")// 웹소켓 구독 ("room//{roomId}")으로 들어오는 거는 다 받음.
     // '/topic/room/123'식으로 url 설정하면됨.
     //구독취소는 클라이언트쪽에서 같은 url로 구독 취소하면됨.
-    public void ParticipateRoom(@DestinationVariable String roomId ,SimpMessageHeaderAccessor headerAccessor){
-        String sessionId = headerAccessor.getSessionId();
-        System.out.println("Client subscribed to room " + roomId + " with session ID: " + sessionId);
+    public void ParticipateRoom(@DestinationVariable String roomId ,SimpMessageHeaderAccessor headerAccessor){//,SimpMessageHeaderAccessor headerAccessor
+        //String sessionId = headerAccessor.getSessionId();
+        System.out.println("Client subscribed to room " + roomId + " with session ID: ");
 
         String NickName = "hello";
-        template.convertAndSend(String.format("/topic/room/%s", roomId),NickName);
+        template.convertAndSend(String.format("/topic/Room/%s", roomId),NickName);
     }
 
-    @MessageMapping("/Start/{roomId}")//클라이언트에서 메세지를 보내는 것.\
+    @MessageMapping("/Start/{roomId}/{userId}")//클라이언트에서 메세지를 보내는 것.
     // '/app/Start/123'식으로 url 설정하면됨.
-    public void RoomStart(@DestinationVariable String roomId){
-        System.out.println("Room Start " + roomId);
+    public void RoomStart(@DestinationVariable String roomId,@DestinationVariable String userId){
+        System.out.println("Room Start " + roomId+" "+userId);
 
-        String NickName = "hello";
-        template.convertAndSend(String.format("/topic/room/%s", roomId),NickName);
+        template.convertAndSend(String.format("/topic/Room/%s", roomId),userId);
     }
 
     @MessageMapping("/GameStart/{roomId}")//클라이언트에서 메세지를 보내는 것.\

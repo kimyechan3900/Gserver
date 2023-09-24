@@ -7,5 +7,6 @@ import lombok.Setter;
 @Setter
 public class ParticipationDTO {
     String roomNumber;
-    String NickName;
+
+    String nickName;
 }

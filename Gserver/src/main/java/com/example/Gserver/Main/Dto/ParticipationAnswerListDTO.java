@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class ParticipationAnswerListDTO {
     String roomNumber;
-    String NickName;
-    String[] NickNameList;
-    String[] AnswerList;
+    String nickName;
+    String[] nickNameList;
+    String[] answerList;
 }

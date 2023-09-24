@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 public class ParticipationAnswerDTO {
     String roomNumber;
-    String NickName;
-    String Answer;
+    String nickName;
+    String answer;
 }
