@@ -30,4 +30,5 @@ jobs:
       - name: Gradle Build without Tests
         run: |
           cd Gserver
+          chmod +x ./gradlew
           ./gradlew build -x test
