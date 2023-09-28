@@ -28,4 +28,6 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
 
       - name: Gradle Build without Tests
-        run: ./gradlew build -x test
+        run: |
+          cd Gserver
+          ./gradlew build -x test
