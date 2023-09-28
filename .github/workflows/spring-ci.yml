@@ -33,7 +33,7 @@ jobs:
           chmod +x ./gradlew
           ./gradlew build -x test
 
-      # 추가된 배포 스텝 (NCP 인스턴스 예시)##
+      # 추가된 배포 스텝 (NCP 인스턴스 예시)
       - name: Deploy to NCP
         env:
           PRIVATE_KEY: ${{ secrets.NCP_SERVER_KEY }}
@@ -45,9 +45,9 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
-          ssh -i private_key.pem $USER@$HOST -p 2222 "\
+          ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST -p 2222 "\
             cd $GIT_DIR && git pull; \
-            cd $GRADLE_DIR && pkill -f java; \
-            nohup java -jar $JAR_DIR & \
+            cd $GRADLE_DIR && ./gradlew build -x test  \
+            pkill -f java && nohup java -jar $JAR_DIR & \
           "
           rm -f private_key.pem
