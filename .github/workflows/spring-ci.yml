@@ -42,7 +42,7 @@ jobs:
           GIT_DIR: /root/Gserver
           GRADLE_DIR: /root/Gserver/Gserver
           JAR_DIR: build/libs/Gserver-0.0.1-SNAPSHOT.jar
-        run: |# 현재 개인키 인증 오류때문에 비밀번호방식으로 진행 (추후 보안때문에 변경요망) (sshpass)
+        run: |## 현재 개인키 인증 오류때문에 비밀번호방식으로 진행 (추후 보안때문에 변경요망) (sshpass)
           echo "$PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
           sudo apt-get install sshpass
