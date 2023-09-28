@@ -33,7 +33,7 @@ jobs:
           chmod +x ./gradlew
           ./gradlew build -x test
 
-      # 추가된 배포 스텝 (NCP 인스턴스 예시)##
+      # CD (NCP)
       - name: Deploy to NCP
         env:
           PRIVATE_KEY: ${{ secrets.NCP_SERVER_KEY }}
