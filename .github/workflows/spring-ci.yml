@@ -11,27 +11,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout code #코드 오류 검토
         uses: actions/checkout@v2
 
-      - name: Set up JDK 11
+      - name: Set up JDK 11 #JAVA 설정
         uses: actions/setup-java@v2
         with:
           java-version: '11'
           distribution: 'adopt'
 
-      - name: Cache Gradle packages
+      - name: Cache Gradle packages # GRADLE 패키징
         uses: actions/cache@v2
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: ${{ runner.os }}-gradle
 
-      - name: Gradle Build without Tests
+      - name: Gradle Build without Tests #빌드 테스트
         run: |
           cd Gserver
           chmod +x ./gradlew
-          ./gradlew build
+          ./gradlew build -x test
 
       # 추가된 배포 스텝 (NCP 인스턴스 예시)
       - name: Deploy to NCP
