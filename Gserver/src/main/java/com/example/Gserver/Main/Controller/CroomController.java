@@ -31,7 +31,7 @@ public class CroomController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/CreateRoom",method = RequestMethod.POST)
+    /*@RequestMapping(value = "/CreateRoom",method = RequestMethod.POST)
     @ApiOperation(value="방장 방생성", notes="방넘버(String),방장닉네임(String)")
     public ResponseEntity<String> CreateRoom(@RequestBody ParticipationDTO participationDTO){
         if(participationDTO.getRoomNumber() == null || participationDTO.getNickName() == null)
@@ -39,7 +39,7 @@ public class CroomController {
         service.CreateRoom(participationDTO);
         String response = "ok";
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+    }*/
     @RequestMapping(value = "/ParticipateRoom",method = RequestMethod.POST)
     @ApiOperation(value="참가자 방참가", notes="방넘버(String),참가자닉네임(String)")
     public ResponseEntity<String> ParticipateRoom(@RequestBody ParticipationDTO participationDTO){
