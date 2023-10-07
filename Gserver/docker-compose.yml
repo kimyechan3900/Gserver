@@ -18,6 +18,12 @@ services:
       SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL55Dialect
       SERVER_ADDRESS: 0.0.0.0
       SERVER_PORT: 8080
+    command:
+      - bash
+      - -c
+      - |
+        ./wait-for-it.sh db-mysql:3306 -s -t 100
+        java -jar /app.jar
 
   db:
     image: mysql:5.7
