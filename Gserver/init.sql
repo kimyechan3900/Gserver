@@ -1,0 +1,2 @@
+GRANT ALL PRIVILEGES ON gserver.* TO 'gserver'@'%';
+FLUSH PRIVILEGES;
