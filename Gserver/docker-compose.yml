@@ -21,13 +21,11 @@ services:
 
   db:
     image: mysql:5.7
-    command: --init-file /data/application/init.sql
-    volumes:
-      - ./init.sql:/data/application/init.sql
     environment:
       MYSQL_ROOT_PASSWORD: 1460
       MYSQL_DATABASE: gserver
       MYSQL_USER: gserver
       MYSQL_PASSWORD: 1460
+    command: --init-file /data/application/init.sql
     ports:
       - "3306:3306"
