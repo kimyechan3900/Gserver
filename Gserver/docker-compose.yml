@@ -2,7 +2,7 @@ version: '3'
 
 services:
   web:
-    image: tioon/gserver:latest
+    image: tioon/gserver:second
     ports:
       - "8080:8080"
     depends_on:
