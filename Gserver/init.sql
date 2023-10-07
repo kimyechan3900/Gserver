@@ -1,2 +1,4 @@
+DROP USER IF EXISTS 'gserver'@'%';
+CREATE USER 'gserver'@'%' IDENTIFIED BY '1460';
 GRANT ALL PRIVILEGES ON gserver.* TO 'gserver'@'%';
 FLUSH PRIVILEGES;
