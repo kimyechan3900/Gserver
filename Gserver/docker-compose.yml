@@ -8,14 +8,23 @@ services:
     depends_on:
       - db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/gserver?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/gserver?useSSL=false&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: gserver
       SPRING_DATASOURCE_PASSWORD: 1460
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_SHOW_SQL: "false"
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: "true"
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL55Dialect
+      SERVER_ADDRESS: 0.0.0.0
+      SERVER_PORT: 8080
 
   db:
     image: mysql:5.7
     environment:
       MYSQL_ROOT_PASSWORD: 1460
       MYSQL_DATABASE: gserver
+      MYSQL_USER: gserver
+      MYSQL_PASSWORD: 1460
     ports:
       - "3306:3306"
