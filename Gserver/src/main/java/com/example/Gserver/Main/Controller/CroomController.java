@@ -36,6 +36,7 @@ public class CroomController {
     public ResponseEntity<String> CreateRoom(@RequestBody ParticipationDTO participationDTO){
         if(participationDTO.getRoomNumber() == null || participationDTO.getNickName() == null)
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
+        System.out.println(participationDTO.getRoomNumber() +" " + participationDTO.getNickName()+"  Controller");
         service.CreateRoom(participationDTO);
         String response = "ok";
         return new ResponseEntity<>(response, HttpStatus.OK);

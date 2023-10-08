@@ -48,6 +48,7 @@ public class GroomService {
             Groom groom = new Groom(roomNumber, 1, 0, 0, 0);//방 생성
             groomRepo.save(groom);
 
+            System.out.println(roomNumber +" " + nickName+"  Controller");
             Participation participation = new Participation(groom, nickName, true, 0,false);
             participationRepo.save(participation);
         }
