@@ -23,7 +23,7 @@ services:
       - bash
       - -c
       - |
-        ./wait-for-it.sh db-mysql:3306 -s -t 100
+        ./wait-for-it.sh db:3306 -s -t 100
         java -jar /app.jar
 
   #db 컨테이너
