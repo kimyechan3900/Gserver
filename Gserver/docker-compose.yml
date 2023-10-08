@@ -1,13 +1,14 @@
 version: '3'
 
 services:
+  #web 컨테이너
   web:
-    image: tioon/gserver:second
+    image: tioon/gserver:second #도커 이미지
     ports:
-      - "8080:8080"
+      - "8080:8080" #호스트와 web 컨테이너 포트매핑
     depends_on:
-      - db
-    environment:
+      - db #db 서비스 의존
+    environment: #환경변수 설정
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/gserver?useSSL=false&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: gserver
       SPRING_DATASOURCE_PASSWORD: 1460
@@ -18,13 +19,14 @@ services:
       SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL55Dialect
       SERVER_ADDRESS: 0.0.0.0
       SERVER_PORT: 8080
-    command:
+    command: #wait-for-it.sh 스크립트 실행
       - bash
       - -c
       - |
         ./wait-for-it.sh db-mysql:3306 -s -t 100
         java -jar /app.jar
 
+  #db 컨테이너
   db:
     image: mysql:5.7
     environment:
@@ -32,6 +34,6 @@ services:
       MYSQL_DATABASE: gserver
       MYSQL_USER: gserver
       MYSQL_PASSWORD: 1460
-    ports:
+    ports: #호스트와 db 컨테이너 포트매핑
       - "3306:3306"
 
