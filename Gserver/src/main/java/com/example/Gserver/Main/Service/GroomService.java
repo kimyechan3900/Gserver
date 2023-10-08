@@ -41,29 +41,29 @@ public class GroomService {
 
     public void CreateRoom(ParticipationDTO participationDTO) {
         String roomNumber = participationDTO.getRoomNumber();
-        String NickName = participationDTO.getNickName();
+        String nickName = participationDTO.getNickName();
         if (groomRepo.existsById(roomNumber)) {
             throw new CustomException(ErrorCode.DUPLICATED_ROOMNUMBER);
         } else {
             Groom groom = new Groom(roomNumber, 1, 0, 0, 0);//방 생성
             groomRepo.save(groom);
 
-            Participation participation = new Participation(groom, NickName, true, 0,false);
+            Participation participation = new Participation(groom, nickName, true, 0,false);
             participationRepo.save(participation);
         }
     }
 
     public void Participation(ParticipationDTO participationDTO) {
         String roomNumber = participationDTO.getRoomNumber();
-        String NickName = participationDTO.getNickName();
+        String nickName = participationDTO.getNickName();
         if (groomRepo.existsById(roomNumber)) {
             Groom groom = groomRepo.getById(roomNumber);
             //System.out.println(groomRepo.existsById(roomNumber));
-            if(participationRepo.existsByRoomIDAndNickName(groom,NickName)) { //방에 해당 닉네임이 있을때
+            if(participationRepo.existsByRoomIDAndNickName(groom,nickName)) { //방에 해당 닉네임이 있을때
                 throw new CustomException(ErrorCode.DUPLICATED_PARTICIPATION);
             }
             else {
-                Participation participation = new Participation(groom, NickName, false, 0, false);
+                Participation participation = new Participation(groom, nickName, false, 0, false);
                 participationRepo.save(participation);
                 groomRepo.plusParticipantCountById(roomNumber);
             }
