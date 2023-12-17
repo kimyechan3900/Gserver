@@ -1,0 +1,42 @@
+package com.example.Gserver.Main.domain.participate.Mapper;
+
+
+import com.example.Gserver.Main.domain.participate.Dto.ResponseDto.HostResponseDto;
+import com.example.Gserver.Main.domain.participate.Dto.ResponseDto.ParticipationResponseDto;
+import com.example.Gserver.Main.domain.participate.Model.Participation;
+import com.example.Gserver.Main.domain.room.Dto.RequestDto.ParticipationRequestDto;
+import com.example.Gserver.Main.domain.room.Model.Room;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
+import java.util.List;
+
+@Mapper
+public interface ParticipateMapper {
+
+    @Mapping(target = "room", source = "roomNumber")
+    @Mapping(target = "participationCount", constant = "1") //방장 참가
+    @Mapping(target = "gameRepeat", constant = "0")
+    @Mapping(target = "currentRound", constant = "0")
+    @Mapping(target = "itCount", constant = "0")
+    Room toRoom(ParticipationRequestDto participationRequestDTO); // 방생성 Mapper
+
+
+
+
+
+
+
+
+    @Mapping(target = "roomNumber", source = "room.roomNumber")
+    @Mapping(target = "nickName", source = "nickName")
+    HostResponseDto toHostResponse (Participation participation);
+
+    @Mapping(target = "roomNumber", source = "roomID")
+    @Mapping(target = "nickName", source = "participation.nickName")
+    ParticipationResponseDto toParticipationResponse (Room room);
+
+
+
+
+}
