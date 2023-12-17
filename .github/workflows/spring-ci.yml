@@ -1,16 +1,17 @@
 name: Spring Gradle CI
 
-on:
+on: #이벤트
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
 
-jobs:
+jobs: #작업
   build:
     runs-on: ubuntu-latest
 
     steps:
+      # CI (NCP)
       - name: Checkout code #코드 오류 검토
         uses: actions/checkout@v2
 
@@ -33,22 +34,43 @@ jobs:
           chmod +x ./gradlew
           ./gradlew build -x test
 
+
+
+
       # CD (NCP)
-      - name: Deploy to NCP
+      - name: Install sshpass #SSH 업데이트
+        run: sudo apt-get install sshpass
+
+      - name: Setup SSH Key #SSH 키 설정
         env:
           PRIVATE_KEY: ${{ secrets.NCP_SERVER_KEY }}
-          HOST: 101.101.161.237 #NCP접속 IP
-          USER: root #NCP접속 유저
-          GIT_DIR: /root/Gserver
-          GRADLE_DIR: /root/Gserver/Gserver
-          JAR_DIR: build/libs/Gserver-0.0.1-SNAPSHOT.jar
-        run: |## 현재 개인키 인증 오류때문에 비밀번호방식으로 진행 (추후 보안때문에 변경요망) (sshpass)
+        run: |
           echo "$PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
-          sudo apt-get install sshpass
-          sshpass -p 'yechan1460' ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST -p 2222 "\ 
-            cd $GIT_DIR && git pull; \
-            cd $GRADLE_DIR && ./gradlew build -x test  \
-            pkill -f java && nohup java -jar $JAR_DIR & \
-          "
-          rm -f private_key.pem
+
+      - name: Pull Latest Code from Repository #최신 코드 PULL
+        env:
+          HOST: 101.101.161.237
+          USER: root
+          GIT_DIR: /root/Gserver
+        run: |
+          sshpass -p 'yechan1460' ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST -p 2222 "cd $GIT_DIR && git pull"
+
+      - name: Build on Server with Gradle #Gradle 빌드 실행
+        env:
+          HOST: 101.101.161.237
+          USER: root
+          GRADLE_DIR: /root/Gserver/Gserver
+        run: |
+          sshpass -p 'yechan1460' ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST -p 2222 "cd $GRADLE_DIR && ./gradlew build -x test"
+
+      - name: Restart Java Application #Application 재시작
+        env:
+          HOST: 101.101.161.237
+          USER: root
+          JAR_DIR: build/libs/Gserver-0.0.1-SNAPSHOT.jar
+        run: |
+          sshpass -p 'yechan1460' ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST -p 2222 "pkill -f java && nohup java -jar $JAR_DIR &"
+
+      - name: Cleanup SSH Key #SSH키 삭제
+        run: rm -f private_key.pem

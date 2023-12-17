@@ -3,8 +3,6 @@ package com.example.Gserver.Main.Controller;
 import com.example.Gserver.Error.CustomException;
 import com.example.Gserver.Error.ErrorCode;
 import com.example.Gserver.Main.Dto.*;
-import com.example.Gserver.Main.Model.Participation;
-import com.example.Gserver.Main.Service.GroomService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
@@ -12,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 
 @RestController
