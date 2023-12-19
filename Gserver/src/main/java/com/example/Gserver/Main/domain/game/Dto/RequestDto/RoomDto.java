@@ -9,5 +9,5 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class RoomDto {
     @NotNull
-    String roomNumber;
+    String roomId;
 }

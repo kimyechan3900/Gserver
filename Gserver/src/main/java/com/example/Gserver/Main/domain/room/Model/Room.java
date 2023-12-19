@@ -20,7 +20,7 @@ public class Room {
 
     @Id
     @Column(name = "ROOM_ID",length = 100)
-    private String roomID;
+    private String roomId;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Player> players;

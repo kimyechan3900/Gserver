@@ -12,7 +12,9 @@ public enum ErrorCode {
     NOT_EXIST_PARTICIPATION(400,"AU_004", "해당 플레이어가 존재하지 않습니다."),
     NOT_EXIST_HOST(400,"AU_005", "방장이 존재하지 않습니다."),
     NOT_EXIST_QUESTION(500,"AU_006", "기본 질문이 존재하지 않습니다."),
-    EMPTY_ROOM(500,"AU_007","해당 방의 플레이어가 존재하지 않습니다.")
+    EMPTY_ROOM(500,"AU_007","해당 방의 플레이어가 존재하지 않습니다."),
+    ALREADY_GAME_START(400,"AU_008","이미 게임 진행 중인 방입니다."),
+    NOT_EXIT_ROOM(400,"AU_009","게임 진행중엔 나갈 수 없습니다.")
     ;
 
     private final int status;

@@ -1,7 +1,9 @@
 package com.example.Gserver.Main.domain.game.Model;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Id;
 
@@ -9,17 +11,18 @@ import javax.persistence.*;
 
 @Entity
 @Table
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
 public class DefaultQuestion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "DEFAULT_QUESTION_ID")
-    private int id;
+    private int defaultQuestionId;
 
     @Column(name = "DEFAULT_QUESTION")
-    private String question;
+    private String defaultQuestion;
 
     public DefaultQuestion(String question) {
     }

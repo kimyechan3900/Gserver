@@ -8,9 +8,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 public class ParticipationResponseDto {
-    @NotNull
-    String roomNumber;
+    String roomId;
 
-    @NotNull
     String nickName;
 }

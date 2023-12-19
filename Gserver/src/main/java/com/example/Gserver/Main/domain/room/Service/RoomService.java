@@ -37,7 +37,7 @@ public class RoomService {
     private CustomQuestionRepo customQuestionRepo;
 
     @Autowired
-    private RoomMapper mapper = Mappers.getMapper(RoomMapper.class);
+    private RoomMapper roomMapper;
 
 
     public RoomService(EntityManager entityManager) {
@@ -46,7 +46,7 @@ public class RoomService {
 
     @Transactional
     public ParticipationResponseDto CreateRoom(ParticipationRequestDto participationRequestDto) {
-        String roomNumber = participationRequestDto.getRoomNumber();
+        String roomNumber = participationRequestDto.getRoomId();
 
         // 방 번호 중복 여부 확인
         if (roomRepo.existsById(roomNumber)) {
@@ -54,20 +54,20 @@ public class RoomService {
         }
 
         // 방 생성 및 참여자 추가
-        Room room = mapper.toRoom(participationRequestDto);
-        Player PLAYER = mapper.toRoomManager(room, participationRequestDto);
+        Room room = roomMapper.toRoom(participationRequestDto);
+        Player PLAYER = roomMapper.toRoomManager(room, participationRequestDto);
 
         // 방과 참여자 정보를 데이터베이스에 저장
         roomRepo.save(room);
         playerRepo.save(PLAYER);
 
-        return mapper.toParticipationResponse(room, PLAYER);
+        return roomMapper.toParticipationResponse(room, PLAYER);
     }
 
 
     @Transactional
     public ParticipationResponseDto Participate(ParticipationRequestDto participationRequestDto) {
-        String roomNumber = participationRequestDto.getRoomNumber();
+        String roomNumber = participationRequestDto.getRoomId();
         String nickName = participationRequestDto.getNickName();
 
         // 방 조회 (없으면 예외 발생)
@@ -80,14 +80,14 @@ public class RoomService {
         }
 
         // 참여 엔티티 생성
-        Player PLAYER = mapper.toParticipation(room, participationRequestDto);
+        Player PLAYER = roomMapper.toParticipation(room, participationRequestDto);
         playerRepo.save(PLAYER);
 
         // 방 참여자 수 증가 및 저장
         room.setPlayerCount(room.getPlayerCount() + 1);
         roomRepo.save(room);
 
-        return mapper.toParticipationResponse(room, PLAYER);
+        return roomMapper.toParticipationResponse(room, PLAYER);
     }
 
 }

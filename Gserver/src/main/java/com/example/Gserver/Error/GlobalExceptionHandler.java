@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
+    /*@ExceptionHandler(Exception.class)
     protected ResponseEntity<String> handleException(Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("서버에 예상치 못한 에러가 발생하였습니다.");
-    }
+    }*/
 
     @ExceptionHandler(CustomException.class)
     protected ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {

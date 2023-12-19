@@ -1,6 +1,7 @@
 package com.example.Gserver.Main.domain.game.Dto.ResponseDto;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,10 +10,9 @@ import java.util.List;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class QuestionResponseDto {
-    @NotNull
-    String roomNumber;
+    String roomId;
 
-    @NotNull
     String question;
 }

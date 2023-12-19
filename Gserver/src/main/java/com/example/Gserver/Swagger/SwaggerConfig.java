@@ -24,7 +24,7 @@ public class SwaggerConfig {
                 .useDefaultResponseMessages(false) // 기본 응답코드 표시
                 .apiInfo(apiInfo()) // Api 정보
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.example.Gserver.Main.Controller")) // 적용할 패키지명
+                .apis(RequestHandlerSelectors.basePackage("com.example.Gserver.Main.domain")) // 적용할 패키지명
                 .paths(PathSelectors.any()) // 패키지 하위에서 적용할 URL path 지정
                 .build();
     }

@@ -1,20 +1,19 @@
-package com.example.Gserver.Main.domain.participate.Dto.ResponseDto;
+package com.example.Gserver.Main.domain.game.Dto.ResponseDto;
 
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
-public class ParticipationResponseDto {
-
+public class ItResponseDto {
     Long playerId;
 
     String nickName;
-
 }

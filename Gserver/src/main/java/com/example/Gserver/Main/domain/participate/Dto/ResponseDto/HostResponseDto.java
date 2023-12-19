@@ -10,9 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 public class HostResponseDto {
-    @NotNull
     int playerId;
 
-    @NotNull
     String nickName;
 }

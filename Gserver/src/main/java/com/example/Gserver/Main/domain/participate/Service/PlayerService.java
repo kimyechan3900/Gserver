@@ -2,10 +2,11 @@ package com.example.Gserver.Main.domain.participate.Service;
 
 import com.example.Gserver.Error.CustomException;
 import com.example.Gserver.Error.ErrorCode;
-import com.example.Gserver.Main.Dto.*;
 
 
+import com.example.Gserver.Main.domain.game.Dto.RequestDto.RoomRequestDto;
 import com.example.Gserver.Main.domain.game.Dto.RequestDto.RoundDto;
+import com.example.Gserver.Main.domain.participate.Dto.ResponseDto.ItResponseDto;
 import com.example.Gserver.Main.domain.game.Repository.CustomQuestionRepo;
 import com.example.Gserver.Main.domain.game.Repository.DefaultQuestionRepo;
 import com.example.Gserver.Main.domain.game.Repository.PlayerAnswerRepo;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,7 +45,7 @@ public class PlayerService {
     @Autowired
     private CustomQuestionRepo customQuestionRepo;
     @Autowired
-    private ParticipateMapper participateMapper = Mappers.getMapper(ParticipateMapper.class);
+    private ParticipateMapper participateMapper ;
 
 
 
@@ -53,12 +55,12 @@ public class PlayerService {
 
 
 
-    public HostResponseDto SearchHost(RoomDTO roomDTO) {
+    public HostResponseDto SearchHost(RoomRequestDto roomDTO) {
         // 방 번호 추출
-        String roomNumber = roomDTO.getRoomNumber();
+        String roomId = roomDTO.getRoomId();
 
         // 방 조회 (없으면 예외 발생)
-        Room room = roomRepo.findByRoomNumber(roomNumber)
+        Room room = roomRepo.findByRoomId(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
 
         // 방장 참가자 조회
@@ -73,40 +75,64 @@ public class PlayerService {
     }
 
 
-    public List<ParticipationResponseDto> getParticipation(RoomDTO roomDTO) {
+    public List<ParticipationResponseDto> getParticipation(RoomRequestDto roomDTO) {
         // 방 번호 추출
-        String roomNumber = roomDTO.getRoomNumber();
+        String roomId = roomDTO.getRoomId();
 
         // 방 조회 (없으면 예외 발생)
-        Room room = roomRepo.findByRoomNumber(roomNumber)
+        Room room = roomRepo.findByRoomId(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
 
         return participateMapper.toParticipationResponse(room.getPlayers());
     }
 
-    public void GameStart(RoundDto roundDTO) {
-        String roomNumber = roundDTO.getRoomNumber();
+    public ItResponseDto GameStart(RoundDto roundDTO) {
+        String roomId = roundDTO.getRoomId();
         int gameRepeatCount = roundDTO.getRound();
 
         // 방 조회 (없으면 예외 발생)
-        Room room = roomRepo.findByRoomNumber(roomNumber)
+        Room room = roomRepo.findByRoomId(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
+
+        //게임 시작 여부 확인
+        if(room.getGameRepeat()!=0)
+            throw new CustomException(ErrorCode.ALREADY_GAME_START);
+
+        // 방에 속한 플레이어 목록 가져오기
+        List<Player> players = playerRepo.findByRoom(room);
+        if (players.isEmpty()) {
+            throw new CustomException(ErrorCode.EMPTY_ROOM);
+        }
+
+        // 플레이어 목록을 섞어 랜덤으로 술래 선택
+        Collections.shuffle(players);
+        Player selectedItPlayer = players.get(0); // 섞인 목록에서 첫 번째 플레이어를 술래로 선택
+
+        // 술래로 선택된 플레이어의 it 값을 true로 변경
+        selectedItPlayer.setIt(true);
+
         room.setGameRepeat(gameRepeatCount);
         roomRepo.save(room);
+
+        return participateMapper.toItResponseDto(selectedItPlayer);
     }
 
     @Transactional
     public void ExitPlayer(ParticipationRequestDto participationRequestDto){
-        String roomNumber = participationRequestDto.getRoomNumber();
+        String roomId = participationRequestDto.getRoomId();
         String nickName = participationRequestDto.getNickName();
 
         // 방 조회 (없으면 예외 발생)
-        Room room = roomRepo.findById(roomNumber)
+        Room room = roomRepo.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
 
         // 사용자 존재 체크 및 삭제
         Player PLAYER = playerRepo.findByRoomAndNickName(room, nickName)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_PARTICIPATION));
+
+        //게임시작 유무 확인
+        if(room.getGameRepeat()!=0)
+            throw new CustomException(ErrorCode.NOT_EXIT_ROOM);
 
 
         // 방에 방장이 나갔다면 새로운 방장을 설정

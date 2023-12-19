@@ -8,5 +8,5 @@ public interface DefaultQuestionRepo extends JpaRepository<DefaultQuestion,Strin
 
     int countBy();
 
-    String findQuestionById(int randomNumber);
+    DefaultQuestion findByDefaultQuestionId(int defaultQuestionId);
 }

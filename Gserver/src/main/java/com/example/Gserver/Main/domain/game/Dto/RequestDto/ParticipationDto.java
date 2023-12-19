@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class ParticipationDto {
     @NotNull
-    String roomNumber;
+    String roomId;
 
     @NotNull
     int playerId;

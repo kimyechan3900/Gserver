@@ -10,5 +10,5 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class RoomRequestDto {
     @NotNull
-    String roomNumber;
+    String roomId;
 }

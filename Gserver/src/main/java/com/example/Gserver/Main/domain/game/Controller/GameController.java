@@ -5,6 +5,7 @@ import com.example.Gserver.Error.ErrorCode;
 import com.example.Gserver.Main.domain.game.Dto.RequestDto.*;
 import com.example.Gserver.Main.domain.game.Dto.ResponseDto.AnswersResponseDto;
 import com.example.Gserver.Main.domain.game.Dto.ResponseDto.CorrectResultResponseDto;
+import com.example.Gserver.Main.domain.game.Dto.ResponseDto.ItResponseDto;
 import com.example.Gserver.Main.domain.game.Dto.ResponseDto.QuestionResponseDto;
 import com.example.Gserver.Main.domain.game.Service.GameService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,7 +18,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/Room")
+@RequestMapping("/Game")
 public class GameController {
 
     GameService gameService;
@@ -51,8 +52,8 @@ public class GameController {
 
     @RequestMapping(value = "ChangeIt",method = RequestMethod.POST)
     @ApiOperation(value="술래 체인지", notes="방넘버(String)")
-    public ResponseEntity<ItChangeDto> ChangeIt(@RequestBody RoomDto roomDTO){
-        ItChangeDto itChangeDto = gameService.changeIt(roomDTO);
+    public ResponseEntity<ItResponseDto> ChangeIt(@RequestBody RoomDto roomDTO){
+        ItResponseDto itChangeDto = gameService.changeIt(roomDTO);
 
         return new ResponseEntity<>(itChangeDto, HttpStatus.OK);
     }

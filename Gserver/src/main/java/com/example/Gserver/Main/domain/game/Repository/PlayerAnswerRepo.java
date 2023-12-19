@@ -15,7 +15,6 @@ import java.util.List;
 @Repository
 public interface PlayerAnswerRepo extends JpaRepository<PlayerAnswer,Long> {
 
-    List<PlayerAnswer> findByPlayerAndRoundCount(Player player, int roundCount);
 
 
     PlayerAnswer findByPlayerAndAnswerRound(Player currentPlayer, int answerRound);

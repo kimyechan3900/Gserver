@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RoundDto {
-    String roomNumber;
+    String roomId;
     int round;
 }

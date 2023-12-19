@@ -5,6 +5,7 @@ import com.example.Gserver.Error.ErrorCode;
 import com.example.Gserver.Main.domain.game.Dto.RequestDto.*;
 import com.example.Gserver.Main.domain.game.Dto.ResponseDto.AnswersResponseDto;
 import com.example.Gserver.Main.domain.game.Dto.ResponseDto.CorrectResultResponseDto;
+import com.example.Gserver.Main.domain.game.Dto.ResponseDto.ItResponseDto;
 import com.example.Gserver.Main.domain.game.Dto.ResponseDto.QuestionResponseDto;
 import com.example.Gserver.Main.domain.game.Mapper.GameMapper;
 import com.example.Gserver.Main.domain.game.Model.CustomQuestion;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -44,7 +46,7 @@ public class GameService {
     @Autowired
     private CustomQuestionRepo customQuestionRepo;
     @Autowired
-    private GameMapper gameMapper = Mappers.getMapper(GameMapper.class);
+    private GameMapper gameMapper;
 
 
 
@@ -59,10 +61,10 @@ public class GameService {
     }
 
     public QuestionResponseDto GetQuestion(RoomRequestDto roomRequestDto){
-        String roomNumber = roomRequestDto.getRoomNumber();
+        String roomId = roomRequestDto.getRoomId();
 
         // 방 조회 (없으면 예외 발생)
-        Room room = roomRepo.findByRoomNumber(roomNumber)
+        Room room = roomRepo.findByRoomId(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
 
         // 전체 질문 수 조회
@@ -75,23 +77,23 @@ public class GameService {
 
         // 랜덤하게 질문 선택
         Random random = new Random();
-        int randomNumber = random.nextInt((int) questionCount);
+        int randomNumber = random.nextInt((int) questionCount)+1;
 
         // 선택된 질문 조회
-        String question = defaultQuestionRepo.findQuestionById(randomNumber);
+        DefaultQuestion defaultQuestion = defaultQuestionRepo.findByDefaultQuestionId(randomNumber);
 
         // QuestionResponseDto 생성 및 반환
-        return gameMapper.toQuestionResponse(room, question);
+        return gameMapper.toQuestionResponse(room, defaultQuestion);
     }
 
 
     public void CompleteAnswer(ParticipationAnswerDto participationAnswerDTO) {
-        String roomNumber = participationAnswerDTO.getRoomNumber();
+        String roomId = participationAnswerDTO.getRoomId();
         Long playerId = participationAnswerDTO.getPlayerId();
         String answer = participationAnswerDTO.getAnswer();
 
         // 방 조회 (없으면 예외 발생)
-        Room room = roomRepo.findByRoomNumber(roomNumber)
+        Room room = roomRepo.findByRoomId(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
 
         // 참가자 조회 (없으면 예외 발생)
@@ -99,17 +101,17 @@ public class GameService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_PARTICIPATION));
 
         // 참가작 질문 답변 생성 및 저장
-        PlayerAnswer playerAnswer = gameMapper.toPlaterAnswer(PLAYER, participationAnswerDTO);
+        PlayerAnswer playerAnswer = gameMapper.toPlayerAnswer(PLAYER, participationAnswerDTO);
         playerAnswerRepo.save(playerAnswer);
     }
 
 
     public List<AnswersResponseDto> GetAnswers(RoundDto roundDTO) {
-        String roomNumber = roundDTO.getRoomNumber();
+        String roomId = roundDTO.getRoomId();
         int currentCount = roundDTO.getRound();
 
         // 방 조회 (없으면 예외 발생)
-        Room room = roomRepo.findByRoomNumber(roomNumber)
+        Room room = roomRepo.findByRoomId(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
 
         // 방에 속한 플레이어 목록 가져오기
@@ -117,8 +119,9 @@ public class GameService {
 
         // 플레이어 응답 조회 및 DTO로 변환
         List<AnswersResponseDto> answers = players.stream()
-                .flatMap(player -> playerAnswerRepo.findByPlayerAndRoundCount(player, currentCount).stream()
-                        .map(playerAnswer -> new AnswersResponseDto(player.getNickName(), playerAnswer.getAnswer())))
+                .map(player -> playerAnswerRepo.findByPlayerAndAnswerRound(player, currentCount))
+                .filter(Objects::nonNull)
+                .map(playerAnswer -> new AnswersResponseDto(playerAnswer.getPlayer().getNickName(), playerAnswer.getAnswer()))
                 .collect(Collectors.toList());
 
         return answers;
@@ -130,18 +133,18 @@ public class GameService {
 
 
     public int CompareAnswer(ParticipationAnswerListDto participationAnswerListDTO){
-        String roomNumber = participationAnswerListDTO.getRoomNumber();
+        String roomId = participationAnswerListDTO.getRoomId();
         Long playerId = participationAnswerListDTO.getPlayerId();
         int answerRound = participationAnswerListDTO.getAnswerRound();
         Long playerIdList[] = participationAnswerListDTO.getPlayerIdList();
         String answerList[] = participationAnswerListDTO.getAnswerList();
 
         // 방 조회 (없으면 예외 발생)
-        Room room = roomRepo.findByRoomNumber(roomNumber)
+        Room room = roomRepo.findByRoomId(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
 
         // 참가자 조회 (없으면 예외 발생)
-        Player PLAYER = playerRepo.findById(playerId)
+        Player player = playerRepo.findById(playerId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_PARTICIPATION));
 
         int correctCount = 0;
@@ -166,15 +169,19 @@ public class GameService {
             }
         }
 
+        //정답개수 업데이트
+        player.setCorrectAnswer(correctCount);
+        playerRepo.save(player);
+
         return correctCount;
     }
 
     @Transactional
-    public ItChangeDto changeIt(RoomDto roomDTO) {
-        String roomNumber = roomDTO.getRoomNumber();
+    public ItResponseDto changeIt(RoomDto roomDTO) {
+        String roomId = roomDTO.getRoomId();
 
         // 방 조회 (없으면 예외 발생)
-        Room room = roomRepo.findByRoomNumber(roomNumber)
+        Room room = roomRepo.findByRoomId(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
 
         // 방에 속한 플레이어 목록 가져오기
@@ -209,16 +216,16 @@ public class GameService {
         playerRepo.save(nextItPlayer);
 
         // 변경된 플레이어 정보를 DTO로 반환
-        return gameMapper.toItChangeDto(nextItPlayer.getPlayerId(), nextItPlayer.getNickName());
+        return gameMapper.toItResponseDto(nextItPlayer);
     }
 
 
     public CorrectResultResponseDto CorrectResult(ParticipationDto participationDTO){
-        String roomNumber = participationDTO.getRoomNumber();
+        String roomId = participationDTO.getRoomId();
         int playerId = participationDTO.getPlayerId();
 
         // 방 조회 (없으면 예외 발생)
-        Room room = roomRepo.findByRoomNumber(roomNumber)
+        Room room = roomRepo.findByRoomId(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
 
         // 플레이어 조회 (없으면 예외 발생)
@@ -231,10 +238,10 @@ public class GameService {
 
 
     public void FinishGame(RoomDto roomDTO){
-        String roomNumber = roomDTO.getRoomNumber();
+        String roomId = roomDTO.getRoomId();
 
         // 방 조회 (없으면 예외 발생)
-        Room room = roomRepo.findByRoomNumber(roomNumber)
+        Room room = roomRepo.findByRoomId(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
 
         // 게임 종료 후, 방 삭제
@@ -242,15 +249,15 @@ public class GameService {
     }
 
     public void SaveCustomQuestion(CustomQuestionDto customQuestionDto){
-        String roomNumber = customQuestionDto.getRoomNumber();
+        String roomId = customQuestionDto.getRoomId();
         String question = customQuestionDto.getQuestion();
 
         // 방 조회 (없으면 예외 발생)
-        Room room = roomRepo.findByRoomNumber(roomNumber)
+        Room room = roomRepo.findByRoomId(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
 
         //엔티티 변환 후 저장
-        CustomQuestion customQuestion = gameMapper.toCustomQuestion(room,customQuestionDto);
+        CustomQuestion customQuestion = gameMapper.toCustomQuestion(room, customQuestionDto);
         customQuestionRepo.save(customQuestion);
     }
 

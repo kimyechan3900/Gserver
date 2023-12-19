@@ -3,13 +3,19 @@ package com.example.Gserver.Main.domain.game.Model;
 
 
 import com.example.Gserver.Main.domain.room.Model.Room;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 
 
 @Entity
+@Data
 @Table
+@NoArgsConstructor
+@AllArgsConstructor
 public class CustomQuestion {
 
 
@@ -24,5 +30,6 @@ public class CustomQuestion {
 
     @Column(name="CUSTOM_QUESTION")
     private String customQuestion;
+
 
 }

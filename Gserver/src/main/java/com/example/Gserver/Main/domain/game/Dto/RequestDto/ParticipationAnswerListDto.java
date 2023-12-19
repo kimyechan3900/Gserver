@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ParticipationAnswerListDto {
-    String roomNumber;
+    String roomId;
     Long playerId;
     int answerRound;
     Long[] playerIdList;
