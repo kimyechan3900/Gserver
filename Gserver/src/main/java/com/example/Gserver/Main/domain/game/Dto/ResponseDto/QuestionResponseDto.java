@@ -1,4 +1,4 @@
-package com.example.Gserver.Main.domain.participate.Dto.ResponseDto;
+package com.example.Gserver.Main.domain.game.Dto.ResponseDto;
 
 
 import lombok.Getter;
@@ -9,10 +9,10 @@ import java.util.List;
 
 @Getter
 @Setter
-public class HostResponseDto {
+public class QuestionResponseDto {
     @NotNull
-    int playerId;
+    String roomNumber;
 
     @NotNull
-    String nickName;
+    String question;
 }

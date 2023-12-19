@@ -2,13 +2,11 @@ package com.example.Gserver.Main.domain.room.Service;
 
 import com.example.Gserver.Error.CustomException;
 import com.example.Gserver.Error.ErrorCode;
-import com.example.Gserver.Main.Dto.ParticipationDTO;
-import com.example.Gserver.Main.Model.*;
-import com.example.Gserver.Main.Repository.CustomQueryRepo;
-import com.example.Gserver.Main.Repository.DefaultQuestionRepo;
-import com.example.Gserver.Main.Repository.PlayerAnswerRepo;
-import com.example.Gserver.Main.domain.participate.Model.Participation;
-import com.example.Gserver.Main.domain.participate.Repository.ParticipationRepo;
+import com.example.Gserver.Main.domain.game.Repository.CustomQuestionRepo;
+import com.example.Gserver.Main.domain.game.Repository.DefaultQuestionRepo;
+import com.example.Gserver.Main.domain.game.Repository.PlayerAnswerRepo;
+import com.example.Gserver.Main.domain.participate.Model.Player;
+import com.example.Gserver.Main.domain.participate.Repository.PlayerRepo;
 import com.example.Gserver.Main.domain.room.Dto.RequestDto.ParticipationRequestDto;
 import com.example.Gserver.Main.domain.room.Dto.ResponseDto.ParticipationResponseDto;
 import com.example.Gserver.Main.domain.room.Mapper.RoomMapper;
@@ -20,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.util.List;
 
 @Service
 public class RoomService {
@@ -31,13 +28,13 @@ public class RoomService {
     @Autowired
     private RoomRepo roomRepo;
     @Autowired
-    private ParticipationRepo participationRepo;
+    private PlayerRepo playerRepo;
     @Autowired
     private PlayerAnswerRepo playerAnswerRepo;
     @Autowired
     private DefaultQuestionRepo defaultQuestionRepo;
     @Autowired
-    private CustomQueryRepo customQueryRepo;
+    private CustomQuestionRepo customQuestionRepo;
 
     @Autowired
     private RoomMapper mapper = Mappers.getMapper(RoomMapper.class);
@@ -58,13 +55,13 @@ public class RoomService {
 
         // 방 생성 및 참여자 추가
         Room room = mapper.toRoom(participationRequestDto);
-        Participation participation = mapper.toRoomManager(room, participationRequestDto);
+        Player PLAYER = mapper.toRoomManager(room, participationRequestDto);
 
         // 방과 참여자 정보를 데이터베이스에 저장
         roomRepo.save(room);
-        participationRepo.save(participation);
+        playerRepo.save(PLAYER);
 
-        return mapper.toParticipationResponse(room,participation);
+        return mapper.toParticipationResponse(room, PLAYER);
     }
 
 
@@ -78,19 +75,19 @@ public class RoomService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
 
         // 닉네임 중복 체크
-        if (participationRepo.existsByRoomIDAndNickName(room, nickName)) {
+        if (playerRepo.existsByRoomAndNickName(room, nickName)) {
             throw new CustomException(ErrorCode.DUPLICATED_PARTICIPATION);
         }
 
         // 참여 엔티티 생성
-        Participation participation = mapper.toParticipation(room, participationRequestDto);
-        participationRepo.save(participation);
+        Player PLAYER = mapper.toParticipation(room, participationRequestDto);
+        playerRepo.save(PLAYER);
 
         // 방 참여자 수 증가 및 저장
-        room.setParticipationCount(room.getParticipationCount() + 1);
+        room.setPlayerCount(room.getPlayerCount() + 1);
         roomRepo.save(room);
 
-        return mapper.toParticipationResponse(room,participation);
+        return mapper.toParticipationResponse(room, PLAYER);
     }
 
 }

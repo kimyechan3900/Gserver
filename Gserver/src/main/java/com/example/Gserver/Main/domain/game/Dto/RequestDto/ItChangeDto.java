@@ -1,17 +1,15 @@
-package com.example.Gserver.Main.domain.participate.Dto.ResponseDto;
-
+package com.example.Gserver.Main.domain.game.Dto.RequestDto;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Getter
 @Setter
-public class HostResponseDto {
+public class ItChangeDto {
     @NotNull
-    int playerId;
+    Long playerId;
 
     @NotNull
     String nickName;

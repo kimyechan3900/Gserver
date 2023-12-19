@@ -2,18 +2,30 @@ package com.example.Gserver.Main.domain.game.Service;
 
 import com.example.Gserver.Error.CustomException;
 import com.example.Gserver.Error.ErrorCode;
-import com.example.Gserver.Main.Dto.*;
-import com.example.Gserver.Main.Model.*;
-import com.example.Gserver.Main.Repository.*;
+import com.example.Gserver.Main.domain.game.Dto.RequestDto.*;
+import com.example.Gserver.Main.domain.game.Dto.ResponseDto.AnswersResponseDto;
+import com.example.Gserver.Main.domain.game.Dto.ResponseDto.CorrectResultResponseDto;
+import com.example.Gserver.Main.domain.game.Dto.ResponseDto.QuestionResponseDto;
+import com.example.Gserver.Main.domain.game.Mapper.GameMapper;
+import com.example.Gserver.Main.domain.game.Model.CustomQuestion;
+import com.example.Gserver.Main.domain.game.Model.DefaultQuestion;
+import com.example.Gserver.Main.domain.game.Model.PlayerAnswer;
+import com.example.Gserver.Main.domain.game.Repository.CustomQuestionRepo;
+import com.example.Gserver.Main.domain.game.Repository.DefaultQuestionRepo;
+import com.example.Gserver.Main.domain.game.Repository.PlayerAnswerRepo;
+import com.example.Gserver.Main.domain.participate.Model.Player;
+import com.example.Gserver.Main.domain.participate.Repository.PlayerRepo;
+import com.example.Gserver.Main.domain.room.Model.Room;
+import com.example.Gserver.Main.domain.room.Repository.RoomRepo;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class GameService {
@@ -22,15 +34,18 @@ public class GameService {
     private final EntityManager entityManager;
 
     @Autowired
-    private GroomRepo groomRepo;
+    private RoomRepo roomRepo;
     @Autowired
-    private ParticipationRepo participationRepo;
+    private PlayerRepo playerRepo;
     @Autowired
     private PlayerAnswerRepo playerAnswerRepo;
     @Autowired
     private DefaultQuestionRepo defaultQuestionRepo;
     @Autowired
-    private CustomQueryRepo customQueryRepo;
+    private CustomQuestionRepo customQuestionRepo;
+    @Autowired
+    private GameMapper gameMapper = Mappers.getMapper(GameMapper.class);
+
 
 
     public GameService(EntityManager entityManager) {
@@ -43,179 +58,200 @@ public class GameService {
         defaultQuestionRepo.save(defaultQuestion);
     }
 
-    public void SaveCustomQuestion(CustomQueryDTO customQueryDTO){
-        String roomNumber = customQueryDTO.getRoomNumber();
-        String question = customQueryDTO.getQuestion();
-        if (groomRepo.existsById(roomNumber)) {
-            Groom groom = groomRepo.getById(roomNumber);
-            CustomQuery customQuestion = new CustomQuery(groom,question);
-            customQueryRepo.save(customQuestion);
-        }
-        else{
-            throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
-        }
-    }
+    public QuestionResponseDto GetQuestion(RoomRequestDto roomRequestDto){
+        String roomNumber = roomRequestDto.getRoomNumber();
 
-    public String GetQuestion(RoomDTO roomDTO){
-        String roomNumber = roomDTO.getRoomNumber();
-        if(groomRepo.existsById(roomNumber)) {
-            Random random = new Random();
-            int count = defaultQuestionRepo.getQustionCount();
-            if(count == 0)
-                throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
-            System.out.println("my test   "+ count);
-            int randomNumber = random.nextInt(count);
-            groomRepo.plusRoundById(roomNumber);
-            return defaultQuestionRepo.getQuestion(randomNumber);
+        // 방 조회 (없으면 예외 발생)
+        Room room = roomRepo.findByRoomNumber(roomNumber)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
+
+        // 전체 질문 수 조회
+        int questionCount = defaultQuestionRepo.countBy();
+
+        // 질문이 하나도 없으면 예외 발생
+        if (questionCount == 0) {
+            throw new CustomException(ErrorCode.NOT_EXIST_QUESTION);
         }
-        else {
-            throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
-        }
+
+        // 랜덤하게 질문 선택
+        Random random = new Random();
+        int randomNumber = random.nextInt((int) questionCount);
+
+        // 선택된 질문 조회
+        String question = defaultQuestionRepo.findQuestionById(randomNumber);
+
+        // QuestionResponseDto 생성 및 반환
+        return gameMapper.toQuestionResponse(room, question);
     }
 
 
-    public void CompleteAnswer(ParticipationAnswerDTO participationAnswerDTO) {
+    public void CompleteAnswer(ParticipationAnswerDto participationAnswerDTO) {
         String roomNumber = participationAnswerDTO.getRoomNumber();
-        String NickName = participationAnswerDTO.getNickName();
-        String Answer = participationAnswerDTO.getAnswer();
-        if (groomRepo.existsById(roomNumber)) {
-            Groom groom = groomRepo.getById(roomNumber);
-            if (participationRepo.existsByRoomIDAndNickName(groom, NickName)) {
-                Participation participation = participationRepo.getByRoomIDAndNickName(groom, NickName);
-                int Count = playerAnswerRepo.countByParticipationAnswer(participation);
-                PlayerAnswer playerAnswer = new PlayerAnswer(participation,groom, Count + 1, Answer);
-                playerAnswerRepo.save(playerAnswer);
-            } else {
-                throw new CustomException(ErrorCode.NOT_EXIST_PARTICIPATION);
-            }
-        } else {
-            throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
-        }
+        Long playerId = participationAnswerDTO.getPlayerId();
+        String answer = participationAnswerDTO.getAnswer();
+
+        // 방 조회 (없으면 예외 발생)
+        Room room = roomRepo.findByRoomNumber(roomNumber)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
+
+        // 참가자 조회 (없으면 예외 발생)
+        Player PLAYER = playerRepo.findById(playerId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_PARTICIPATION));
+
+        // 참가작 질문 답변 생성 및 저장
+        PlayerAnswer playerAnswer = gameMapper.toPlaterAnswer(PLAYER, participationAnswerDTO);
+        playerAnswerRepo.save(playerAnswer);
     }
 
 
-    public void CurrentRoomCount(){
-        System.out.println(groomRepo.count());
+    public List<AnswersResponseDto> GetAnswers(RoundDto roundDTO) {
+        String roomNumber = roundDTO.getRoomNumber();
+        int currentCount = roundDTO.getRound();
+
+        // 방 조회 (없으면 예외 발생)
+        Room room = roomRepo.findByRoomNumber(roomNumber)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
+
+        // 방에 속한 플레이어 목록 가져오기
+        List<Player> players = playerRepo.findByRoom(room);
+
+        // 플레이어 응답 조회 및 DTO로 변환
+        List<AnswersResponseDto> answers = players.stream()
+                .flatMap(player -> playerAnswerRepo.findByPlayerAndRoundCount(player, currentCount).stream()
+                        .map(playerAnswer -> new AnswersResponseDto(player.getNickName(), playerAnswer.getAnswer())))
+                .collect(Collectors.toList());
+
+        return answers;
     }
 
-    public int CompareAnswer(ParticipationAnswerListDTO participationAnswerListDTO){
+
+
+
+
+
+    public int CompareAnswer(ParticipationAnswerListDto participationAnswerListDTO){
         String roomNumber = participationAnswerListDTO.getRoomNumber();
-        String NickName = participationAnswerListDTO.getNickName();
-        String selectNickName[] = participationAnswerListDTO.getNickNameList();
-        String selectAnswer[] = participationAnswerListDTO.getAnswerList();
-        int count;
-        int round;
-        Groom groom;
-        Participation myPart;
-        if (groomRepo.existsById(roomNumber)) {
-            groom = groomRepo.getById(roomNumber);
-            count = groomRepo.getParticipationCount(roomNumber);
-            round = groomRepo.getCurrentRound(roomNumber);
-            myPart = participationRepo.getByRoomIDAndNickName(groom,NickName);
-        }
-        else{
-            throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
-        }
+        Long playerId = participationAnswerListDTO.getPlayerId();
+        int answerRound = participationAnswerListDTO.getAnswerRound();
+        Long playerIdList[] = participationAnswerListDTO.getPlayerIdList();
+        String answerList[] = participationAnswerListDTO.getAnswerList();
 
-        if(selectNickName.length != count-1 || selectAnswer.length != count-1)
-            throw new CustomException(ErrorCode.INVALID_INPUT_LIST);
+        // 방 조회 (없으면 예외 발생)
+        Room room = roomRepo.findByRoomNumber(roomNumber)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
 
-        for(int i=0;i<count-1;i++) {
-            Participation participation = participationRepo.getByRoomIDAndNickName(groom, selectNickName[i]);
-            String Answer = playerAnswerRepo.getByParticipationIDAndRoundCount(participation, round);
-            System.out.println(Answer + "   " + selectAnswer[i]);
-            if (selectAnswer[i].equals(Answer)) {
-                System.out.println("답변이 일치합니다!");
-                participationRepo.plusCorrectAnswer(groom, NickName);
-                //myPart.setCorrectAnswer(myPart.getCorrectAnswer()+1);
-            } else {
-                System.out.println("답변이 일치하지 않습니다.");
+        // 참가자 조회 (없으면 예외 발생)
+        Player PLAYER = playerRepo.findById(playerId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_PARTICIPATION));
+
+        int correctCount = 0;
+
+        // playerIdList에 있는 사용자들의 답변을 찾아서 비교
+        for (int i = 0; i < playerIdList.length; i++) {
+            Long currentPlayerId = playerIdList[i];
+
+            // playerIdList에 있는 각 사용자의 답변 조회
+            Player currentPlayer = playerRepo.findById(currentPlayerId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_PARTICIPATION));
+
+            // 현재 사용자의 특정 라운드의 답변 조회
+            PlayerAnswer currentAnswer = playerAnswerRepo.findByPlayerAndAnswerRound(currentPlayer, answerRound);
+            if (currentAnswer != null) {
+                // 정답 비교
+                String expectedAnswer = answerList[i];
+                String actualAnswer = currentAnswer.getAnswer();
+                if (expectedAnswer.equals(actualAnswer)) {
+                    correctCount++;
+                }
             }
         }
-        System.out.println(groom.getRoomID() + NickName);
 
-        return participationRepo.getCorrectAnswer(groom,NickName);
+        return correctCount;
     }
 
     @Transactional
-    public String ChangeIt(RoomDTO roomDTO){
+    public ItChangeDto changeIt(RoomDto roomDTO) {
         String roomNumber = roomDTO.getRoomNumber();
-        if (groomRepo.existsById(roomNumber)){
-            Groom groom = groomRepo.getById(roomNumber);
-            if(groomRepo.getItCount(roomNumber) == groomRepo.getParticipationCount(roomNumber)){ // 술래 한바퀴 돌았을 때
-                groomRepo.resetItCount(roomNumber);
-                participationRepo.resetIt(groom);
-                System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-            }
-            int max = groomRepo.getParticipationCount(roomNumber);
-            int current = groomRepo.getItCount(roomNumber);
-            for(int i=0;i<max;i++){
-                Pageable pageable = PageRequest.of(i,1);
-                int ParticipationID=participationRepo.getOneParticipation(groom,pageable).get(0);
-                System.out.println(ParticipationID+"\n\n\n\n\n\n"+(i)+"   "+current+"\n\n\n\n");
-                if(i==current) {
-                    participationRepo.TrueIt(ParticipationID);
-                }
-                else {
-                    participationRepo.FalseIt(ParticipationID);
-                }
-            }
-            groomRepo.plusItCountById(roomNumber);
-            return participationRepo.getIt(groom);
+
+        // 방 조회 (없으면 예외 발생)
+        Room room = roomRepo.findByRoomNumber(roomNumber)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
+
+        // 방에 속한 플레이어 목록 가져오기
+        List<Player> players = playerRepo.findByRoom(room);
+        if (players.isEmpty()) {
+            throw new CustomException(ErrorCode.EMPTY_ROOM);
         }
-        return null;
+
+        // 현재 술래 찾기
+        Player currentItPlayer = players.stream()
+                .filter(Player::isIt)
+                .findFirst()
+                .orElse(null);
+
+        // 다음 술래 찾기
+        Player nextItPlayer = null;
+        if (currentItPlayer != null) {
+            int nextIndex = (players.indexOf(currentItPlayer) + 1) % players.size();
+            nextItPlayer = players.get(nextIndex);
+        } else {
+            nextItPlayer = players.get(0);
+        }
+
+        // 현재 술래의 it 값을 false로 변경
+        if (currentItPlayer != null) {
+            currentItPlayer.setIt(false);
+            playerRepo.save(currentItPlayer);
+        }
+
+        // 다음 술래의 it 값을 true로 변경
+        nextItPlayer.setIt(true);
+        playerRepo.save(nextItPlayer);
+
+        // 변경된 플레이어 정보를 DTO로 반환
+        return gameMapper.toItChangeDto(nextItPlayer.getPlayerId(), nextItPlayer.getNickName());
     }
 
-    public String GetIt(RoomDTO roomDTO){
-        String roomNumber = roomDTO.getRoomNumber();
-        if (groomRepo.existsById(roomNumber)){
-            Groom groom = groomRepo.getById(roomNumber);
-            return participationRepo.getIt(groom);
-        }
-        throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
-    }
 
-    public List<String> GetAnswers(RoundDTO roundDTO){
-        String roomNumber = roundDTO.getRoomNumber();
-        int CurrentCount = roundDTO.getRound();
-        if (groomRepo.existsById(roomNumber)){
-            Groom groom = groomRepo.getById(roomNumber);
-            if(groomRepo.getParticipationCount(roomNumber)-1 == playerAnswerRepo.getAnswerCount(groom,CurrentCount)){
-                return playerAnswerRepo.getAnswers(groom,CurrentCount);
-            }
-            else
-                throw new CustomException(ErrorCode.INVALID_LIST);
-        }
-        throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
-    }
-
-    public int CorrectResult(ParticipationDTO participationDTO){
+    public CorrectResultResponseDto CorrectResult(ParticipationDto participationDTO){
         String roomNumber = participationDTO.getRoomNumber();
-        String NickName = participationDTO.getNickName();
-        if (groomRepo.existsById(roomNumber)) {
-            Groom groom = groomRepo.getById(roomNumber);
-            if (participationRepo.existsByRoomIDAndNickName(groom, NickName)) {
-                Participation participation = participationRepo.getByRoomIDAndNickName(groom, NickName);
-                return participationRepo.getCorrectAnswer(groom,NickName);
-            } else {
-                throw new CustomException(ErrorCode.NOT_EXIST_PARTICIPATION);
-            }
-        } else {
-            throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
-        }
+        int playerId = participationDTO.getPlayerId();
+
+        // 방 조회 (없으면 예외 발생)
+        Room room = roomRepo.findByRoomNumber(roomNumber)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
+
+        // 플레이어 조회 (없으면 예외 발생)
+        Player player = playerRepo.findById(Long.valueOf(playerId))
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_PARTICIPATION));
+
+        return gameMapper.toCorrectResultResponse(player.getCorrectAnswer());
     }
 
-    public void FinishGame(RoomDTO roomDTO){
+
+
+    public void FinishGame(RoomDto roomDTO){
         String roomNumber = roomDTO.getRoomNumber();
-        if (groomRepo.existsById(roomNumber)) {
-            Groom groom = groomRepo.getById(roomNumber);
-            playerAnswerRepo.deleteByRoomID(groom);
-            participationRepo.deleteByRoomID(groom);
-            customQueryRepo.deleteByRoomID(groom);
-            groomRepo.deleteByRoomID(roomNumber);
-        } else {
-            throw new CustomException(ErrorCode.NOT_EXIST_ROOM);
-        }
+
+        // 방 조회 (없으면 예외 발생)
+        Room room = roomRepo.findByRoomNumber(roomNumber)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
+
+        // 게임 종료 후, 방 삭제
+        roomRepo.delete(room);
+    }
+
+    public void SaveCustomQuestion(CustomQuestionDto customQuestionDto){
+        String roomNumber = customQuestionDto.getRoomNumber();
+        String question = customQuestionDto.getQuestion();
+
+        // 방 조회 (없으면 예외 발생)
+        Room room = roomRepo.findByRoomNumber(roomNumber)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
+
+        //엔티티 변환 후 저장
+        CustomQuestion customQuestion = gameMapper.toCustomQuestion(room,customQuestionDto);
+        customQuestionRepo.save(customQuestion);
     }
 
 

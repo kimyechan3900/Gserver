@@ -3,13 +3,14 @@ package com.example.Gserver.Main.domain.participate.Mapper;
 
 import com.example.Gserver.Main.domain.participate.Dto.ResponseDto.HostResponseDto;
 import com.example.Gserver.Main.domain.participate.Dto.ResponseDto.ParticipationResponseDto;
-import com.example.Gserver.Main.domain.participate.Model.Participation;
+import com.example.Gserver.Main.domain.participate.Model.Player;
 import com.example.Gserver.Main.domain.room.Dto.RequestDto.ParticipationRequestDto;
 import com.example.Gserver.Main.domain.room.Model.Room;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Mapper
 public interface ParticipateMapper {
@@ -26,15 +27,16 @@ public interface ParticipateMapper {
 
 
 
-
-
-    @Mapping(target = "roomNumber", source = "room.roomNumber")
+    @Mapping(target = "playerId", source = "playerId")
     @Mapping(target = "nickName", source = "nickName")
-    HostResponseDto toHostResponse (Participation participation);
+    HostResponseDto toHostResponse (Player player);
 
-    @Mapping(target = "roomNumber", source = "roomID")
-    @Mapping(target = "nickName", source = "participation.nickName")
-    ParticipationResponseDto toParticipationResponse (Room room);
+
+    default List<ParticipationResponseDto> toParticipationResponse(List<Player> players) {
+        return players.stream()
+                .map(player -> new ParticipationResponseDto(player.getPlayerId(), player.getNickName()))
+                .collect(Collectors.toList());
+    }
 
 
 

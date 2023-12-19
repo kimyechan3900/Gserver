@@ -1,6 +1,7 @@
 package com.example.Gserver.Main.domain.participate.Dto.ResponseDto;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,10 +10,12 @@ import java.util.List;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class ParticipationResponseDto {
-    @NotNull
-    String roomNumber;
 
     @NotNull
-    List<String> nickName;
+    int playerId;
+
+    @NotNull
+    String nickName;
 }

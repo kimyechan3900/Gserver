@@ -1,6 +1,6 @@
 package com.example.Gserver.Main.domain.participate.Model;
 
-import com.example.Gserver.Main.Model.PlayerAnswer;
+import com.example.Gserver.Main.domain.game.Model.PlayerAnswer;
 import com.example.Gserver.Main.domain.room.Model.Room;
 import lombok.*;
 
@@ -14,31 +14,32 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(schema = "gserver",name = "participation", uniqueConstraints = {@UniqueConstraint(columnNames = {"PartRoomID", "NickName"})})
-public class Participation implements Serializable {
+@Table
+public class Player implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ParticipationID")
-    private int participationID;
+    @Column(name = "PLAYER_ID")
+    private Long playerId;
 
-    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "player", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<PlayerAnswer> playerAnswers;
 
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "PartRoomID")
+    @JoinColumn(name = "ROOM_ID")
     private Room room;
-    @Column(name = "NickName")
+
+    @Column(name = "NICK_NAME")
     private String nickName;
 
-    @Column(name = "RoomOwner")
+    @Column(name = "ROOM_OWNER")
     private boolean roomOwner;
 
-    @Column(name = "CorrectAnswer")
+    @Column(name = "CORRECT_ANSWER")
     private int correctAnswer;
 
-    @Column(name = "It")
+    @Column(name = "IT")
     private boolean it;
 
 }

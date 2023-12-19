@@ -5,16 +5,16 @@ import com.example.Gserver.Error.ErrorCode;
 import com.example.Gserver.Main.Dto.*;
 
 
-import com.example.Gserver.Main.Repository.CustomQueryRepo;
-import com.example.Gserver.Main.Repository.DefaultQuestionRepo;
-import com.example.Gserver.Main.Repository.PlayerAnswerRepo;
+import com.example.Gserver.Main.domain.game.Dto.RequestDto.RoundDto;
+import com.example.Gserver.Main.domain.game.Repository.CustomQuestionRepo;
+import com.example.Gserver.Main.domain.game.Repository.DefaultQuestionRepo;
+import com.example.Gserver.Main.domain.game.Repository.PlayerAnswerRepo;
 import com.example.Gserver.Main.domain.participate.Dto.ResponseDto.HostResponseDto;
 import com.example.Gserver.Main.domain.participate.Dto.ResponseDto.ParticipationResponseDto;
 import com.example.Gserver.Main.domain.participate.Mapper.ParticipateMapper;
-import com.example.Gserver.Main.domain.participate.Model.Participation;
-import com.example.Gserver.Main.domain.participate.Repository.ParticipationRepo;
+import com.example.Gserver.Main.domain.participate.Model.Player;
+import com.example.Gserver.Main.domain.participate.Repository.PlayerRepo;
 import com.example.Gserver.Main.domain.room.Dto.RequestDto.ParticipationRequestDto;
-import com.example.Gserver.Main.domain.room.Mapper.RoomMapper;
 import com.example.Gserver.Main.domain.room.Model.Room;
 import com.example.Gserver.Main.domain.room.Repository.RoomRepo;
 import org.mapstruct.factory.Mappers;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ParticipateService {
+public class PlayerService {
 
 
     private final EntityManager entityManager;
@@ -35,19 +35,19 @@ public class ParticipateService {
     @Autowired
     private RoomRepo roomRepo;
     @Autowired
-    private ParticipationRepo participationRepo;
+    private PlayerRepo playerRepo;
     @Autowired
     private PlayerAnswerRepo playerAnswerRepo;
     @Autowired
     private DefaultQuestionRepo defaultQuestionRepo;
     @Autowired
-    private CustomQueryRepo customQueryRepo;
+    private CustomQuestionRepo customQuestionRepo;
     @Autowired
     private ParticipateMapper participateMapper = Mappers.getMapper(ParticipateMapper.class);
 
 
 
-    public ParticipateService(EntityManager entityManager) {
+    public PlayerService(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
@@ -62,18 +62,18 @@ public class ParticipateService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
 
         // 방장 참가자 조회
-        Optional<Participation> hostParticipationOptional = participationRepo.findByRoomIDAndRoomOwnerIsTrue(room);
+        Optional<Player> hostParticipationOptional = playerRepo.findByRoomAndRoomOwnerIsTrue(room);
 
         // 방장이 존재하지 않으면 예외 발생
-        Participation hostParticipation = hostParticipationOptional
+        Player hostPlayer = hostParticipationOptional
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_HOST));
 
         // Participation을 RoomResponseDto로 매핑하여 반환
-        return participateMapper.toHostResponse(hostParticipation);
+        return participateMapper.toHostResponse(hostPlayer);
     }
 
 
-    public ParticipationResponseDto getParticipation(RoomDTO roomDTO) {
+    public List<ParticipationResponseDto> getParticipation(RoomDTO roomDTO) {
         // 방 번호 추출
         String roomNumber = roomDTO.getRoomNumber();
 
@@ -81,10 +81,10 @@ public class ParticipateService {
         Room room = roomRepo.findByRoomNumber(roomNumber)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
 
-        return participateMapper.toParticipationResponse(room);
+        return participateMapper.toParticipationResponse(room.getPlayers());
     }
 
-    public void GameStart(RoundDTO roundDTO) {
+    public void GameStart(RoundDto roundDTO) {
         String roomNumber = roundDTO.getRoomNumber();
         int gameRepeatCount = roundDTO.getRound();
 
@@ -105,28 +105,28 @@ public class ParticipateService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
 
         // 사용자 존재 체크 및 삭제
-        Participation participation = participationRepo.findByRoomIDAndNickName(room, nickName)
+        Player PLAYER = playerRepo.findByRoomAndNickName(room, nickName)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_PARTICIPATION));
 
 
         // 방에 방장이 나갔다면 새로운 방장을 설정
-        if (participation.isRoomOwner()) {
-            List<Participation> remainingParticipants = room.getParticipation();
+        if (PLAYER.isRoomOwner()) {
+            List<Player> remainingParticipants = room.getPlayers();
             if (!remainingParticipants.isEmpty()) {
-                Participation newRoomOwner = remainingParticipants.get(0);
+                Player newRoomOwner = remainingParticipants.get(0);
                 newRoomOwner.setRoomOwner(true);
-                participationRepo.save(newRoomOwner);
+                playerRepo.save(newRoomOwner);
             }
         }
 
         // 방 참가자 수 갱신
-        room.setParticipationCount(room.getParticipationCount() - 1);
+        room.setPlayerCount(room.getPlayerCount() - 1);
 
         // 참가자 삭제
-        participationRepo.delete(participation);
+        playerRepo.delete(PLAYER);
 
         // 방에 참가자가 1명일 때 방 삭제
-        if (room.getParticipationCount() == 0) {
+        if (room.getPlayerCount() == 0) {
             roomRepo.delete(room);
         }
     }
