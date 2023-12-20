@@ -18,11 +18,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/Player")
-public class ParticipateController {
+public class PlayerController {
 
     PlayerService playerService;
 
-    public ParticipateController(PlayerService playerService){
+    public PlayerController(PlayerService playerService){
         this.playerService = playerService;
     }
 

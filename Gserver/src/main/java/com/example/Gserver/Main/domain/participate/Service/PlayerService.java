@@ -122,14 +122,14 @@ public class PlayerService {
     @Transactional
     public void ExitPlayer(ParticipationRequestDto participationRequestDto){
         String roomId = participationRequestDto.getRoomId();
-        String nickName = participationRequestDto.getNickName();
+        Long playerId = participationRequestDto.getPlayerId();
 
         // 방 조회 (없으면 예외 발생)
         Room room = roomRepo.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
 
         // 사용자 존재 체크 및 삭제
-        Player PLAYER = playerRepo.findByRoomAndNickName(room, nickName)
+        Player PLAYER = playerRepo.findById(playerId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_PARTICIPATION));
 
         //게임시작 유무 확인

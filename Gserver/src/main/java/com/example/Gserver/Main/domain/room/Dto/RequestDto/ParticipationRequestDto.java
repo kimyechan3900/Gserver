@@ -12,5 +12,5 @@ public class ParticipationRequestDto {
     String roomId;
 
     @NotNull
-    String nickName;
+    Long playerId;
 }
