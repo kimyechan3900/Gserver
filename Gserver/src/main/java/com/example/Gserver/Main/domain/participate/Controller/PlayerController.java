@@ -2,6 +2,7 @@ package com.example.Gserver.Main.domain.participate.Controller;
 
 import com.example.Gserver.Main.domain.game.Dto.RequestDto.RoomRequestDto;
 import com.example.Gserver.Main.domain.game.Dto.RequestDto.RoundDto;
+import com.example.Gserver.Main.domain.participate.Dto.RequestDto.ExitRequestDto;
 import com.example.Gserver.Main.domain.participate.Dto.ResponseDto.HostResponseDto;
 import com.example.Gserver.Main.domain.participate.Dto.ResponseDto.ItResponseDto;
 import com.example.Gserver.Main.domain.participate.Dto.ResponseDto.ParticipationResponseDto;
@@ -54,8 +55,8 @@ public class PlayerController {
 
     @RequestMapping(value = "/Exit",method = RequestMethod.POST)
     @ApiOperation(value="플레이어 방 나가기", notes="방넘버(String),본인닉네임(String)")
-    public void Exit(@RequestBody @Valid ParticipationRequestDto participationRequestDto){
-        playerService.ExitPlayer(participationRequestDto);
+    public void Exit(@RequestBody @Valid ExitRequestDto exitRequestDto){
+        playerService.ExitPlayer(exitRequestDto);
     }
 
 

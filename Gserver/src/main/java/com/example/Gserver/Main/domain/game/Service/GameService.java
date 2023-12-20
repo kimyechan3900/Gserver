@@ -133,7 +133,7 @@ public class GameService {
 
 
     @Transactional
-    public int CompareAnswer(ParticipationAnswerListDto participationAnswerListDTO){
+    public CorrectResultResponseDto CompareAnswer(ParticipationAnswerListDto participationAnswerListDTO){
         String roomId = participationAnswerListDTO.getRoomId();
         Long playerId = participationAnswerListDTO.getPlayerId();
         int answerRound = participationAnswerListDTO.getAnswerRound();
@@ -174,7 +174,7 @@ public class GameService {
         player.setCorrectAnswer(correctCount);
         playerRepo.save(player);
 
-        return correctCount;
+        return gameMapper.toCorrectResultResponse(player.getCorrectAnswer());
     }
 
     @Transactional

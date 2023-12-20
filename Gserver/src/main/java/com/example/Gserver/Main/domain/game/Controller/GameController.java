@@ -61,10 +61,10 @@ public class GameController {
 
     @RequestMapping(value = "/GuessPerson",method = RequestMethod.POST)
     @ApiOperation(value="질문 맞추기완료", notes="방넘버(String),본인닉네임(String),대상닉네임(String),대상 답변(String)")
-    public ResponseEntity<Integer> GuessPerson(@RequestBody ParticipationAnswerListDto participationAnswerListDTO){
-        int correctCount = gameService.CompareAnswer(participationAnswerListDTO);
+    public ResponseEntity<CorrectResultResponseDto> GuessPerson(@RequestBody ParticipationAnswerListDto participationAnswerListDTO){
+        CorrectResultResponseDto correctResultResponseDto = gameService.CompareAnswer(participationAnswerListDTO);
 
-        return new ResponseEntity<>(correctCount, HttpStatus.OK);
+        return new ResponseEntity<>(correctResultResponseDto, HttpStatus.OK);
     }
 
 

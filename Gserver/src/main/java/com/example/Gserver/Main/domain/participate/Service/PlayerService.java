@@ -6,6 +6,7 @@ import com.example.Gserver.Error.ErrorCode;
 
 import com.example.Gserver.Main.domain.game.Dto.RequestDto.RoomRequestDto;
 import com.example.Gserver.Main.domain.game.Dto.RequestDto.RoundDto;
+import com.example.Gserver.Main.domain.participate.Dto.RequestDto.ExitRequestDto;
 import com.example.Gserver.Main.domain.participate.Dto.ResponseDto.ItResponseDto;
 import com.example.Gserver.Main.domain.game.Repository.CustomQuestionRepo;
 import com.example.Gserver.Main.domain.game.Repository.DefaultQuestionRepo;
@@ -120,9 +121,9 @@ public class PlayerService {
     }
 
     @Transactional
-    public void ExitPlayer(ParticipationRequestDto participationRequestDto){
-        String roomId = participationRequestDto.getRoomId();
-        Long playerId = participationRequestDto.getPlayerId();
+    public void ExitPlayer(ExitRequestDto exitRequestDto){
+        String roomId = exitRequestDto.getRoomId();
+        Long playerId = exitRequestDto.getPlayerId();
 
         // 방 조회 (없으면 예외 발생)
         Room room = roomRepo.findById(roomId)
@@ -140,8 +141,8 @@ public class PlayerService {
         // 방에 방장이 나갔다면 새로운 방장을 설정
         if (PLAYER.isRoomOwner()) {
             List<Player> remainingParticipants = room.getPlayers();
-            if (!remainingParticipants.isEmpty()) {
-                Player newRoomOwner = remainingParticipants.get(0);
+            if (remainingParticipants.size() > 1) {
+                Player newRoomOwner = remainingParticipants.get(1);
                 newRoomOwner.setRoomOwner(true);
                 playerRepo.save(newRoomOwner);
             }
@@ -149,6 +150,7 @@ public class PlayerService {
 
         // 방 참가자 수 갱신
         room.setPlayerCount(room.getPlayerCount() - 1);
+        roomRepo.save(room);
 
         // 참가자 삭제
         playerRepo.delete(PLAYER);

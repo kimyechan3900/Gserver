@@ -79,6 +79,10 @@ public class RoomService {
             throw new CustomException(ErrorCode.DUPLICATED_PARTICIPATION);
         }
 
+        //게임시작 유무 확인
+        if(room.getGameRepeat()!=0)
+            throw new CustomException(ErrorCode.NOT_ENTRANCE_ROOM);
+
         // 참여 엔티티 생성
         Player PLAYER = roomMapper.toParticipation(room, participationRequestDto);
         playerRepo.save(PLAYER);
