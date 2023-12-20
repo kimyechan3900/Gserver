@@ -10,5 +10,7 @@ import javax.validation.constraints.NotNull;
 public class ParticipationResponseDto {
     String roomId;
 
+    Long playerId;
+
     String nickName;
 }

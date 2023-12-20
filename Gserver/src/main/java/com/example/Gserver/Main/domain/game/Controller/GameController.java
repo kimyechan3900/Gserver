@@ -76,6 +76,7 @@ public class GameController {
         return new ResponseEntity<>(correctResultResponseDto, HttpStatus.OK);
     }
 
+
     @RequestMapping(value = "/Finish",method = RequestMethod.POST)
     @ApiOperation(value="게임 종료", notes="방넘버(String)")
     public void FinishGame(@RequestBody RoomDto roomDTO){

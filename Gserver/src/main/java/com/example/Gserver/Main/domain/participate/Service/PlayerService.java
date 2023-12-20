@@ -111,7 +111,9 @@ public class PlayerService {
         // 술래로 선택된 플레이어의 it 값을 true로 변경
         selectedItPlayer.setIt(true);
 
+        //방의 전체 round수 세팅과 현재 라운드 수 +1
         room.setGameRepeat(gameRepeatCount);
+        room.setCurrentRound(room.getCurrentRound()+1);
         roomRepo.save(room);
 
         return participateMapper.toItResponseDto(selectedItPlayer);

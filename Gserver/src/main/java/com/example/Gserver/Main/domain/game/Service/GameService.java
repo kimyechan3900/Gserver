@@ -132,6 +132,7 @@ public class GameService {
 
 
 
+    @Transactional
     public int CompareAnswer(ParticipationAnswerListDto participationAnswerListDTO){
         String roomId = participationAnswerListDTO.getRoomId();
         Long playerId = participationAnswerListDTO.getPlayerId();
@@ -214,6 +215,10 @@ public class GameService {
         // 다음 술래의 it 값을 true로 변경
         nextItPlayer.setIt(true);
         playerRepo.save(nextItPlayer);
+
+        //현재 게임 라운드 수 +1
+        room.setCurrentRound(room.getCurrentRound()+1);
+        roomRepo.save(room);
 
         // 변경된 플레이어 정보를 DTO로 반환
         return gameMapper.toItResponseDto(nextItPlayer);

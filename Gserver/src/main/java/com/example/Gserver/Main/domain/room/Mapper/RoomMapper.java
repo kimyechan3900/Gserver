@@ -38,6 +38,7 @@ public interface RoomMapper {
 
 
     @Mapping(target = "roomId", source = "room.roomId")
+    @Mapping(target = "playerId", source = "player.playerId")
     @Mapping(target = "nickName", source = "player.nickName")
     ParticipationResponseDto toParticipationResponse (Room room, Player player);
 
