@@ -1,7 +1,7 @@
 package com.example.Gserver;
 
-import com.example.Gserver.Local.CroomRepo;
-import com.example.Gserver.Local.CroomService;
+import com.example.Gserver.local.CroomRepo;
+import com.example.Gserver.local.CroomService;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;

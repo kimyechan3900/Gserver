@@ -1,4 +1,4 @@
-package com.example.Gserver.Main.domain.game.Model;
+package com.example.Gserver.Main.domain.question.Model;
 
 
 

@@ -1,14 +1,12 @@
 package com.example.Gserver.Main.domain.game.Controller;
 
-import com.example.Gserver.Error.CustomException;
-import com.example.Gserver.Error.ErrorCode;
 import com.example.Gserver.Main.domain.game.Dto.RequestDto.*;
 import com.example.Gserver.Main.domain.game.Dto.ResponseDto.AnswersResponseDto;
 import com.example.Gserver.Main.domain.game.Dto.ResponseDto.CorrectResultResponseDto;
 import com.example.Gserver.Main.domain.game.Dto.ResponseDto.ItResponseDto;
 import com.example.Gserver.Main.domain.game.Dto.ResponseDto.QuestionResponseDto;
 import com.example.Gserver.Main.domain.game.Service.GameService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.Gserver.Main.domain.question.Dto.Request.CustomQuestionDto;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,6 +1,6 @@
-package com.example.Gserver.Main.domain.game.Repository;
+package com.example.Gserver.Main.domain.question.Repository;
 
-import com.example.Gserver.Main.domain.game.Model.DefaultQuestion;
+import com.example.Gserver.Main.domain.question.Model.DefaultQuestion;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DefaultQuestionRepo extends JpaRepository<DefaultQuestion,String> {

@@ -1,6 +1,5 @@
-package com.example.Gserver.Local;
+package com.example.Gserver.local;
 
-import com.example.Gserver.Local.GRoom;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;

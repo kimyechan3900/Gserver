@@ -1,9 +1,9 @@
 package com.example.Gserver.Main.domain.room.Service;
 
-import com.example.Gserver.Error.CustomException;
-import com.example.Gserver.Error.ErrorCode;
-import com.example.Gserver.Main.domain.game.Repository.CustomQuestionRepo;
-import com.example.Gserver.Main.domain.game.Repository.DefaultQuestionRepo;
+import com.example.Gserver.error.CustomException;
+import com.example.Gserver.error.ErrorCode;
+import com.example.Gserver.Main.domain.question.Repository.CustomQuestionRepo;
+import com.example.Gserver.Main.domain.question.Repository.DefaultQuestionRepo;
 import com.example.Gserver.Main.domain.game.Repository.PlayerAnswerRepo;
 import com.example.Gserver.Main.domain.participate.Model.Player;
 import com.example.Gserver.Main.domain.participate.Repository.PlayerRepo;
@@ -12,7 +12,6 @@ import com.example.Gserver.Main.domain.room.Dto.ResponseDto.ParticipationRespons
 import com.example.Gserver.Main.domain.room.Mapper.RoomMapper;
 import com.example.Gserver.Main.domain.room.Model.Room;
 import com.example.Gserver.Main.domain.room.Repository.RoomRepo;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

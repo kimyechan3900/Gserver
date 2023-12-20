@@ -1,4 +1,4 @@
-package com.example.Gserver.Main.domain.game.Dto.RequestDto;
+package com.example.Gserver.Main.domain.question.Dto.Request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

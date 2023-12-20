@@ -1,4 +1,4 @@
-package com.example.Gserver.Error;
+package com.example.Gserver.error;
 
 import lombok.Getter;
 

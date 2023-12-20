@@ -1,4 +1,4 @@
-package com.example.Gserver.Local;
+package com.example.Gserver.local;
 
 public class PlayerAnswer {
     private String content;

@@ -1,4 +1,4 @@
-package com.example.Gserver.Main.domain.game.Model;
+package com.example.Gserver.Main.domain.question.Model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

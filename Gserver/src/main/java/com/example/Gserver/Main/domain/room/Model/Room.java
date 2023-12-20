@@ -1,6 +1,6 @@
 package com.example.Gserver.Main.domain.room.Model;
 
-import com.example.Gserver.Main.domain.game.Model.CustomQuestion;
+import com.example.Gserver.Main.domain.question.Model.CustomQuestion;
 import com.example.Gserver.Main.domain.participate.Model.Player;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

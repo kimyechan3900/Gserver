@@ -1,4 +1,4 @@
-package com.example.Gserver.Local;
+package com.example.Gserver.local;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
