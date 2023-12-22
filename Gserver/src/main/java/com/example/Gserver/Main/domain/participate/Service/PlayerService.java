@@ -4,9 +4,7 @@ import com.example.Gserver.error.CustomException;
 import com.example.Gserver.error.ErrorCode;
 
 
-import com.example.Gserver.Main.domain.game.Dto.RequestDto.RoomRequestDto;
 import com.example.Gserver.Main.domain.game.Dto.RequestDto.RoundDto;
-import com.example.Gserver.Main.domain.participate.Dto.RequestDto.ExitRequestDto;
 import com.example.Gserver.Main.domain.participate.Dto.ResponseDto.ItResponseDto;
 import com.example.Gserver.Main.domain.question.Repository.CustomQuestionRepo;
 import com.example.Gserver.Main.domain.question.Repository.DefaultQuestionRepo;
@@ -54,9 +52,7 @@ public class PlayerService {
 
 
 
-    public HostResponseDto SearchHost(RoomRequestDto roomDTO) {
-        // 방 번호 추출
-        String roomId = roomDTO.getRoomId();
+    public HostResponseDto GetHost(String roomId) {
 
         // 방 조회 (없으면 예외 발생)
         Room room = roomRepo.findByRoomId(roomId)
@@ -74,9 +70,7 @@ public class PlayerService {
     }
 
 
-    public List<ParticipationResponseDto> getParticipation(RoomRequestDto roomDTO) {
-        // 방 번호 추출
-        String roomId = roomDTO.getRoomId();
+    public List<ParticipationResponseDto> getParticipation(String roomId) {
 
         // 방 조회 (없으면 예외 발생)
         Room room = roomRepo.findByRoomId(roomId)
@@ -119,17 +113,17 @@ public class PlayerService {
     }
 
     @Transactional
-    public void ExitPlayer(ExitRequestDto exitRequestDto){
-        String roomId = exitRequestDto.getRoomId();
-        Long playerId = exitRequestDto.getPlayerId();
+    public void ExitPlayer(Long playerId){
 
-        // 방 조회 (없으면 예외 발생)
-        Room room = roomRepo.findById(roomId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
+
 
         // 사용자 존재 체크 및 삭제
-        Player PLAYER = playerRepo.findById(playerId)
+        Player player = playerRepo.findById(playerId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_PARTICIPATION));
+
+        // 방 조회 (없으면 예외 발생)
+        Room room = roomRepo.findById(player.getRoom().getRoomId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
 
         //게임시작 유무 확인
         if(room.getGameRepeat()!=0)
@@ -137,7 +131,7 @@ public class PlayerService {
 
 
         // 방에 방장이 나갔다면 새로운 방장을 설정
-        if (PLAYER.isRoomOwner()) {
+        if (player.isRoomOwner()) {
             List<Player> remainingParticipants = room.getPlayers();
             if (remainingParticipants.size() > 1) {
                 Player newRoomOwner = remainingParticipants.get(1);
@@ -151,7 +145,7 @@ public class PlayerService {
         roomRepo.save(room);
 
         // 참가자 삭제
-        playerRepo.delete(PLAYER);
+        playerRepo.delete(player);
 
         // 방에 참가자가 1명일 때 방 삭제
         if (room.getPlayerCount() == 0) {

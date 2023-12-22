@@ -1,13 +1,10 @@
 package com.example.Gserver.Main.domain.participate.Controller;
 
-import com.example.Gserver.Main.domain.game.Dto.RequestDto.RoomRequestDto;
 import com.example.Gserver.Main.domain.game.Dto.RequestDto.RoundDto;
-import com.example.Gserver.Main.domain.participate.Dto.RequestDto.ExitRequestDto;
 import com.example.Gserver.Main.domain.participate.Dto.ResponseDto.HostResponseDto;
 import com.example.Gserver.Main.domain.participate.Dto.ResponseDto.ItResponseDto;
 import com.example.Gserver.Main.domain.participate.Dto.ResponseDto.ParticipationResponseDto;
 import com.example.Gserver.Main.domain.participate.Service.PlayerService;
-import com.example.Gserver.Main.domain.room.Dto.RequestDto.ParticipationRequestDto;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,23 +25,23 @@ public class PlayerController {
     }
 
 
-    @RequestMapping(value = "/SearchHost",method = RequestMethod.POST)
+    @RequestMapping(value = "/GetHost/{roomId}",method = RequestMethod.GET)
     @ApiOperation(value="방장 정보 가져오기", notes="방넘버(String)")
-    public ResponseEntity<HostResponseDto> SearchHost(@RequestBody @Valid RoomRequestDto roomDTO){
-        HostResponseDto hostResponseDto= playerService.SearchHost(roomDTO);
+    public ResponseEntity<HostResponseDto> SearchHost(@PathVariable String roomId){
+        HostResponseDto hostResponseDto= playerService.GetHost(roomId);
 
         return new ResponseEntity<>(hostResponseDto, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/GetParticipation",method = RequestMethod.POST)
+    @RequestMapping(value = "/GetParticipation/{roomId}",method = RequestMethod.GET)
     @ApiOperation(value="참가자 정보 가져오기", notes="방넘버(String)")
-    public ResponseEntity<List<ParticipationResponseDto>> GetParticipation(@RequestBody @Valid RoomRequestDto roomDto){
-        List<ParticipationResponseDto> participationResponseDto = playerService.getParticipation(roomDto);
+    public ResponseEntity<List<ParticipationResponseDto>> GetParticipation(@PathVariable String roomId){
+        List<ParticipationResponseDto> participationResponseDto = playerService.getParticipation(roomId);
 
         return new ResponseEntity<>(participationResponseDto, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/GameStart",method = RequestMethod.POST)
+    @RequestMapping(value = "/GameStart",method = RequestMethod.PATCH)
     @ApiOperation(value="게임 시작", notes="방넘버(String),라운드개수(String)")
     public ResponseEntity<ItResponseDto> GameStart(@RequestBody @Valid RoundDto roundDTO){
         ItResponseDto itResponseDto = playerService.GameStart(roundDTO);
@@ -52,12 +49,9 @@ public class PlayerController {
         return new ResponseEntity<>(itResponseDto, HttpStatus.OK);
     }
 
-
-    @RequestMapping(value = "/Exit",method = RequestMethod.POST)
+    @RequestMapping(value = "/Exit/{playerId}",method = RequestMethod.DELETE)
     @ApiOperation(value="플레이어 방 나가기", notes="방넘버(String),본인닉네임(String)")
-    public void Exit(@RequestBody @Valid ExitRequestDto exitRequestDto){
-        playerService.ExitPlayer(exitRequestDto);
+    public void Exit(@PathVariable Long playerId){
+        playerService.ExitPlayer(playerId);
     }
-
-
 }

@@ -61,8 +61,7 @@ public class QuestionService {
         defaultQuestionRepo.save(defaultQuestion);
     }
 
-    public QuestionResponseDto GetQuestion(RoomRequestDto roomRequestDto){
-        String roomId = roomRequestDto.getRoomId();
+    public QuestionResponseDto GetQuestion(String roomId){
 
         // 방 조회 (없으면 예외 발생)
         Room room = roomRepo.findByRoomId(roomId)

@@ -60,8 +60,7 @@ public class GameService {
         defaultQuestionRepo.save(defaultQuestion);
     }
 
-    public QuestionResponseDto GetQuestion(RoomRequestDto roomRequestDto){
-        String roomId = roomRequestDto.getRoomId();
+    public QuestionResponseDto GetQuestion(String roomId){
 
         // 방 조회 (없으면 예외 발생)
         Room room = roomRepo.findByRoomId(roomId)
@@ -106,9 +105,7 @@ public class GameService {
     }
 
 
-    public List<AnswersResponseDto> GetAnswers(RoundDto roundDTO) {
-        String roomId = roundDTO.getRoomId();
-        int currentCount = roundDTO.getRound();
+    public List<AnswersResponseDto> GetAnswers(String roomId, int currentCount) {
 
         // 방 조회 (없으면 예외 발생)
         Room room = roomRepo.findByRoomId(roomId)
@@ -225,25 +222,23 @@ public class GameService {
     }
 
 
-    public CorrectResultResponseDto CorrectResult(ParticipationDto participationDTO){
-        String roomId = participationDTO.getRoomId();
-        int playerId = participationDTO.getPlayerId();
+    public CorrectResultResponseDto CorrectResult(Long playerId){
 
-        // 방 조회 (없으면 예외 발생)
-        Room room = roomRepo.findByRoomId(roomId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
 
         // 플레이어 조회 (없으면 예외 발생)
         Player player = playerRepo.findById(Long.valueOf(playerId))
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_PARTICIPATION));
+
+        // 방 조회 (없으면 예외 발생)
+        Room room = roomRepo.findByRoomId(player.getRoom().getRoomId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_ROOM));
 
         return gameMapper.toCorrectResultResponse(player.getCorrectAnswer());
     }
 
 
 
-    public void FinishGame(RoomDto roomDTO){
-        String roomId = roomDTO.getRoomId();
+    public void FinishGame(String roomId){
 
         // 방 조회 (없으면 예외 발생)
         Room room = roomRepo.findByRoomId(roomId)
