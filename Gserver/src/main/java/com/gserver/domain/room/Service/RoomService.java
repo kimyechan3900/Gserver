@@ -12,6 +12,7 @@ import com.gserver.domain.room.Dto.ResponseDto.ParticipationResponseDto;
 import com.gserver.domain.room.Mapper.RoomMapper;
 import com.gserver.domain.room.Model.Room;
 import com.gserver.domain.room.Repository.RoomRepo;
+import com.gserver.global.websocket.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,8 @@ public class RoomService {
     private DefaultQuestionRepo defaultQuestionRepo;
     @Autowired
     private CustomQuestionRepo customQuestionRepo;
+    @Autowired
+    private ChatService chatService;
 
     @Autowired
     private RoomMapper roomMapper;
@@ -59,6 +62,9 @@ public class RoomService {
         // 방과 참여자 정보를 데이터베이스에 저장
         roomRepo.save(room);
         playerRepo.save(PLAYER);
+
+        //웹소켓 방 생성
+        chatService.createRoom(roomNumber);
 
         return roomMapper.toParticipationResponse(room, PLAYER);
     }
