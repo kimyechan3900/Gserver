@@ -21,6 +21,9 @@ import com.gserver.domain.question.Repository.DefaultQuestionRepo;
 import com.gserver.domain.game.Repository.PlayerAnswerRepo;
 import com.gserver.domain.room.Model.Room;
 import com.gserver.domain.room.Repository.RoomRepo;
+import com.gserver.global.websocket.ChatMessage;
+import com.gserver.global.websocket.ChatService;
+import com.gserver.global.websocket.WebSocketHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +52,10 @@ public class GameService {
     private CustomQuestionRepo customQuestionRepo;
     @Autowired
     private GameMapper gameMapper;
+    @Autowired
+    private WebSocketHandler webSocketHandler;
+    @Autowired
+    private ChatService chatService;
 
 
 
@@ -83,6 +90,19 @@ public class GameService {
         // 선택된 질문 조회
         DefaultQuestion defaultQuestion = defaultQuestionRepo.findByDefaultQuestionId(randomNumber);
 
+        //웹소켓 전송
+        ChatMessage message = ChatMessage.builder()
+                .type(ChatMessage.MessageType.GET_QUESTION)
+                .roomNumber(roomId)
+                .question(defaultQuestion.getDefaultQuestion())
+                .build();
+        try {
+            webSocketHandler.handleRoomEvent(message);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
         // QuestionResponseDto 생성 및 반환
         return gameMapper.toQuestionResponse(room, defaultQuestion);
     }
@@ -104,6 +124,18 @@ public class GameService {
         // 참가작 질문 답변 생성 및 저장
         PlayerAnswer playerAnswer = gameMapper.toPlayerAnswer(PLAYER, participationAnswerDTO);
         playerAnswerRepo.save(playerAnswer);
+
+        //웹소켓 전송
+        ChatMessage message = ChatMessage.builder()
+                .type(ChatMessage.MessageType.ANSWER_COMPLETE)
+                .roomNumber(roomId)
+                .playerId(playerId)
+                .build();
+        try {
+            webSocketHandler.handleRoomEvent(message);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -173,6 +205,19 @@ public class GameService {
         player.setCorrectAnswer(correctCount);
         playerRepo.save(player);
 
+        //웹소켓 전송
+        ChatMessage message =ChatMessage.builder()
+                .type(ChatMessage.MessageType.CORRECT_COUNT)
+                .roomNumber(roomId)
+                .playerId(playerId)
+                .correctCount(player.getCorrectAnswer())
+                .build();
+        try {
+            webSocketHandler.handleRoomEvent(message);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         return gameMapper.toCorrectResultResponse(player.getCorrectAnswer());
     }
 
@@ -219,6 +264,19 @@ public class GameService {
         room.setCurrentRound(room.getCurrentRound()+1);
         roomRepo.save(room);
 
+        //웹소켓 전송
+        ChatMessage message = ChatMessage.builder()
+                .type(ChatMessage.MessageType.ROUND_CHANGE)
+                .roomNumber(roomId)
+                .playerId(nextItPlayer.getPlayerId())
+                .currentRound(room.getCurrentRound())
+                .build();
+        try {
+            webSocketHandler.handleRoomEvent(message);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         // 변경된 플레이어 정보를 DTO로 반환
         return gameMapper.toItResponseDto(nextItPlayer);
     }
@@ -248,6 +306,18 @@ public class GameService {
 
         // 게임 종료 후, 방 삭제
         roomRepo.delete(room);
+
+        //웹소켓 전송
+        ChatMessage message = ChatMessage.builder()
+                .type(ChatMessage.MessageType.FINISH)
+                .roomNumber(roomId)
+                .build();
+        try {
+            webSocketHandler.handleRoomEvent(message);
+            chatService.deleteRoom(roomId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void SaveCustomQuestion(CustomQuestionDto customQuestionDto){

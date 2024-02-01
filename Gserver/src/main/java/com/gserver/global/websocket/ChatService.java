@@ -53,6 +53,7 @@ public class ChatService {
         chatRooms.put(roomNumber, chatRoom);
         return chatRoom;
     }
+
     //방 삭제
     public void deleteRoom(String roomNumber) {
         //해당방에 아무도 없다면 자동 삭제

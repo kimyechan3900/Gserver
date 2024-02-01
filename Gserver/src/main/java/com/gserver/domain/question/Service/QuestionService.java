@@ -13,6 +13,8 @@ import com.gserver.domain.room.Model.Room;
 import com.gserver.domain.room.Repository.RoomRepo;
 import com.gserver.global.error.CustomException;
 import com.gserver.global.error.ErrorCode;
+import com.gserver.global.websocket.ChatMessage;
+import com.gserver.global.websocket.WebSocketHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +39,8 @@ public class QuestionService {
     private CustomQuestionRepo customQuestionRepo;
     @Autowired
     private QuestionMapper questionMapper;
+    @Autowired
+    private WebSocketHandler webSocketHandler;
 
 
 
@@ -70,6 +74,18 @@ public class QuestionService {
 
         // 선택된 질문 조회
         DefaultQuestion defaultQuestion = defaultQuestionRepo.findByDefaultQuestionId(randomNumber);
+
+        //웹소켓 전송
+        ChatMessage message = ChatMessage.builder()
+                .type(ChatMessage.MessageType.GET_QUESTION)
+                .roomNumber(roomId)
+                .question(defaultQuestion.getDefaultQuestion())
+                .build();
+        try {
+            webSocketHandler.handleRoomEvent(message);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         // QuestionResponseDto 생성 및 반환
         return questionMapper.toQuestionResponse(room, defaultQuestion);

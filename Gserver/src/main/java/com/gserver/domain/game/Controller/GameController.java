@@ -7,6 +7,7 @@ import com.gserver.domain.game.Dto.ResponseDto.AnswersResponseDto;
 import com.gserver.domain.game.Dto.ResponseDto.CorrectResultResponseDto;
 import com.gserver.domain.game.Dto.ResponseDto.ItResponseDto;
 import com.gserver.domain.game.Service.GameService;
+import com.gserver.global.websocket.ChatService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -73,6 +74,7 @@ public class GameController {
     @ApiOperation(value="게임 종료", notes="방넘버(String)")
     public void FinishGame(@PathVariable String roomId){
         gameService.FinishGame(roomId);
+
     }
 
 

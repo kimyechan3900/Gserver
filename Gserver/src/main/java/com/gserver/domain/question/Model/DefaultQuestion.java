@@ -24,8 +24,8 @@ public class DefaultQuestion {
     @Column(name = "DEFAULT_QUESTION")
     private String defaultQuestion;
 
-    public DefaultQuestion(String question) {
+    public DefaultQuestion(String defaultQuestion) {
+        this.defaultQuestion = defaultQuestion;
     }
 }
-
 

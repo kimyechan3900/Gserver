@@ -16,6 +16,9 @@ import com.gserver.domain.participate.Mapper.ParticipateMapper;
 import com.gserver.domain.participate.Repository.PlayerRepo;
 import com.gserver.domain.room.Model.Room;
 import com.gserver.domain.room.Repository.RoomRepo;
+import com.gserver.global.websocket.ChatMessage;
+import com.gserver.global.websocket.ChatService;
+import com.gserver.global.websocket.WebSocketHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +46,8 @@ public class PlayerService {
     private CustomQuestionRepo customQuestionRepo;
     @Autowired
     private ParticipateMapper participateMapper ;
+    @Autowired
+    private WebSocketHandler webSocketHandler;
 
 
 
@@ -109,6 +114,20 @@ public class PlayerService {
         room.setCurrentRound(room.getCurrentRound()+1);
         roomRepo.save(room);
 
+        //웹소켓 전송
+        ChatMessage message = ChatMessage.builder()
+                .type(ChatMessage.MessageType.GAME_START)
+                .roomNumber(roomId)
+                .playerId(selectedItPlayer.getPlayerId())
+                .currentRound(room.getCurrentRound())
+                .build();
+        try {
+            webSocketHandler.handleRoomEvent(message);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
         return participateMapper.toItResponseDto(selectedItPlayer);
     }
 
@@ -148,9 +167,9 @@ public class PlayerService {
         playerRepo.delete(player);
 
         // 방에 참가자가 1명일 때 방 삭제
-        if (room.getPlayerCount() == 0) {
+        if (room.getPlayerCount() == 0)
             roomRepo.delete(room);
-        }
+
     }
 
 
