@@ -112,6 +112,7 @@ public class GameService {
         String roomId = participationAnswerDTO.getRoomId();
         Long playerId = participationAnswerDTO.getPlayerId();
         String answer = participationAnswerDTO.getAnswer();
+        int roundCount = participationAnswerDTO.getRoundCount();
 
         // 방 조회 (없으면 예외 발생)
         Room room = roomRepo.findByRoomId(roomId)
@@ -130,6 +131,7 @@ public class GameService {
                 .type(ChatMessage.MessageType.ANSWER_COMPLETE)
                 .roomNumber(roomId)
                 .playerId(playerId)
+                .currentRound(roundCount)
                 .build();
         try {
             webSocketHandler.handleRoomEvent(message);
