@@ -1,6 +1,7 @@
 package com.gserver.global.websocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gserver.domain.participate.Repository.PlayerRepo;
 import com.gserver.domain.room.Model.Room;
 import com.gserver.domain.room.Repository.RoomRepo;
 import com.gserver.global.error.CustomException;
@@ -29,6 +30,9 @@ public class ChatService {
     @Autowired
     private RoomRepo roomRepo;
 
+    @Autowired
+    private PlayerRepo playerRepo;
+
     private Map<String, ChatRoom> chatRooms = new HashMap<>();
 
 
@@ -48,6 +52,7 @@ public class ChatService {
     public ChatRoom createRoom(String roomNumber) {
         ChatRoom chatRoom = ChatRoom.builder()
                 .roomNumber(roomNumber)
+                .playerRepo(playerRepo)
                 .build();
 
         chatRooms.put(roomNumber, chatRoom);

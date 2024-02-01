@@ -15,12 +15,12 @@ public class ChatRoom {
     private String roomNumber;
     private Set<WebSocketSession> members = new HashSet<>();
 
-    @Autowired
     private PlayerRepo playerRepo;
 
     @Builder
-    public ChatRoom(String roomNumber) {
+    public ChatRoom(String roomNumber,PlayerRepo playerRepo) {
         this.roomNumber = roomNumber;
+        this.playerRepo = playerRepo;
     }
 
     //방입장, 퇴장시에 호출
@@ -29,10 +29,12 @@ public class ChatRoom {
         switch (chatMessage.getType()) {
             // 방입장 (소켓 세션 연결)
             case ENTER:
-                members.add(session);
 
-                if(playerRepo.findById(chatMessage.getPlayerId()).get().getRoom().equals(chatMessage.getRoomNumber()))
-                    throw new RuntimeException(); // 추후 수정예정
+
+                if(!playerRepo.findById(chatMessage.getPlayerId()).get().getRoom().getRoomId().equals(chatMessage.getRoomNumber()))
+                    throw new RuntimeException(); // 사용자 정보가 일치하지 않으면 에러 처리.
+
+                members.add(session);
 
                 chatMessage.setType(chatMessage.getType());
                 chatMessage.setRoomNumber(chatMessage.getRoomNumber());
@@ -44,6 +46,9 @@ public class ChatRoom {
 
             // 방퇴장 (소켓 세션 해제)
             case EXIT:
+                if(playerRepo.findById(chatMessage.getPlayerId()).get().getRoom().equals(chatMessage.getRoomNumber()))
+                    throw new RuntimeException(); // 사용자 정보가 일치하지 않으면 에러 처리.
+
                 chatMessage.setType(chatMessage.getType());
                 chatMessage.setRoomNumber(chatMessage.getRoomNumber());
                 chatMessage.setPlayerId(chatMessage.getPlayerId());

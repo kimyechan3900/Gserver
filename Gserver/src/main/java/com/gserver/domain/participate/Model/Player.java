@@ -22,7 +22,7 @@ public class Player implements Serializable {
     @Column(name = "PLAYER_ID")
     private Long playerId;
 
-    @OneToMany(mappedBy = "player", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "player", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<PlayerAnswer> playerAnswers;
 
 
