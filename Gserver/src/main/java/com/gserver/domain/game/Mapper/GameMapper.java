@@ -23,13 +23,11 @@ public interface GameMapper {
     @Mapping(target = "answer", source = "participationAnswerDto.answer")
     PlayerAnswer toPlayerAnswer (Player player, ParticipationAnswerDto participationAnswerDto);
 
-
     @Mappings({
             @Mapping(target = "room", source = "room"),
             @Mapping(target = "customQuestion", source = "customQuestionDto.question")
     })
     CustomQuestion toCustomQuestion(Room room, CustomQuestionDto customQuestionDto);
-
 
 
 
@@ -40,12 +38,8 @@ public interface GameMapper {
     })
     QuestionResponseDto toQuestionResponse (Room room , DefaultQuestion defaultQuestion);
 
-
-    QuestionResponseDto toQuestionResponse(Room room, String question);
-
     @Mapping(target = "correctAnswer", source = "correctAnswer")
     CorrectResultResponseDto toCorrectResultResponse (Integer correctAnswer);
-
 
     @Mapping(target = "playerId", source = "player.playerId")
     @Mapping(target = "nickName", source = "player.nickName")

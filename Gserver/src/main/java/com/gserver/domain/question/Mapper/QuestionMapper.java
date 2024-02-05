@@ -22,7 +22,6 @@ public interface QuestionMapper {
 
 
 
-
     @Mappings({
             @Mapping(target = "roomId", source = "room.roomId"),
             @Mapping(target = "question", source = "defaultQuestion.defaultQuestion")

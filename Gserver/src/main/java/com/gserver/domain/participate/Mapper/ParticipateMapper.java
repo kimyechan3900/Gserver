@@ -31,13 +31,11 @@ public interface ParticipateMapper {
     @Mapping(target = "nickName", source = "nickName")
     HostResponseDto toHostResponse (Player player);
 
-
     default List<ParticipationResponseDto> toParticipationResponse(List<Player> players) {
         return players.stream()
                 .map(player -> new ParticipationResponseDto(player.getPlayerId(), player.getNickName()))
                 .collect(Collectors.toList());
     }
-
 
     @Mapping(target = "playerId", source = "player.playerId")
     @Mapping(target = "nickName", source = "player.nickName")
