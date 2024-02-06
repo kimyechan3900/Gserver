@@ -1,4 +1,4 @@
-package com.gserver.global.websocket;
+package com.gserver.domain.websocket.dto;
 
 import lombok.Builder;
 import lombok.Getter;

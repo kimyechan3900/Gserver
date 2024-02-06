@@ -1,11 +1,9 @@
-package com.gserver.global.websocket;
+package com.gserver.domain.websocket.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gserver.domain.participate.Repository.PlayerRepo;
-import com.gserver.domain.room.Model.Room;
 import com.gserver.domain.room.Repository.RoomRepo;
-import com.gserver.global.error.CustomException;
-import com.gserver.global.error.ErrorCode;
+import com.gserver.domain.websocket.domain.ChatRoom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor

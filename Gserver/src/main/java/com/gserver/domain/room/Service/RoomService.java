@@ -12,7 +12,7 @@ import com.gserver.domain.room.Dto.ResponseDto.ParticipationResponseDto;
 import com.gserver.domain.room.Mapper.RoomMapper;
 import com.gserver.domain.room.Model.Room;
 import com.gserver.domain.room.Repository.RoomRepo;
-import com.gserver.global.websocket.ChatService;
+import com.gserver.domain.websocket.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

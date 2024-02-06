@@ -13,7 +13,7 @@ import com.gserver.domain.room.Model.Room;
 import com.gserver.domain.room.Repository.RoomRepo;
 import com.gserver.global.error.CustomException;
 import com.gserver.global.error.ErrorCode;
-import com.gserver.global.websocket.ChatMessage;
+import com.gserver.domain.websocket.dto.ChatMessage;
 import com.gserver.global.websocket.WebSocketHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

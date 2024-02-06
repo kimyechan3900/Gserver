@@ -1,10 +1,10 @@
-package com.gserver.global.websocket;
+package com.gserver.domain.websocket.domain;
 
 import com.gserver.domain.participate.Repository.PlayerRepo;
+import com.gserver.domain.websocket.dto.ChatMessage;
+import com.gserver.domain.websocket.service.ChatService;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.HashSet;
