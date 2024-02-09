@@ -34,17 +34,14 @@ dependencies {
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'mysql:mysql-connector-java'
+	//runtimeOnly 'com.h2database:h2'
 
 	// 테스트 의존성
 	testImplementation 'junit:junit:4.13.1'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	// MapStruct 테스트 의존성
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
-
-
-
-
 
 }
 

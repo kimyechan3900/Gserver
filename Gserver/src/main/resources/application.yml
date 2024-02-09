@@ -1,13 +1,9 @@
 spring:
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:testdb
-    username: sa
-    password:
-  h2:
-    console:
-      enabled: true
-      path: /h2
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://db-lhhdv.pub-cdb.ntruss.com:3306/gserver?useSSL=false&serverTimezone=UTC
+    username: tioon
+    password: yechan1460-
   jpa:
     show-sql: false
     hibernate:
