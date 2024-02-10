@@ -42,6 +42,9 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	// MapStruct 테스트 의존성
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api'
+	testImplementation 'org.mockito:mockito-core'
+	testImplementation 'org.mockito:mockito-junit-jupiter'
 
 }
 
